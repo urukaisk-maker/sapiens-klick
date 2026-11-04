@@ -52,3 +52,5 @@ export const getTopCards = () =>
   fetch(`${API_BASE}/stats/top-cards`).then(jsonOrThrow);
 export const getAchievements = (name) =>
   fetch(`${API_BASE}/achievements/${encodeURIComponent(name)}`).then(jsonOrThrow);
+export const getLeague = (name) =>
+  fetch(`${API_BASE}/league/${encodeURIComponent(name)}`).then(jsonOrThrow);

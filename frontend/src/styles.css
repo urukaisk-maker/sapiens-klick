@@ -687,3 +687,131 @@ code {
   text-align: right;
 }
 .kcard.locked .achievement-bar { opacity: 0.4; }
+
+/* ---------- Ligas ---------- */
+.league-card {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.4rem;
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+.league-emoji {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(212, 169, 90, 0.4));
+}
+.league-info { flex: 1; }
+.league-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.league-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.7rem;
+}
+.league-progress {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+.league-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+.league-next {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.league-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  border: 1px solid currentColor;
+}
+.secret-marker::before {
+  content: '🔒';
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  font-size: 1rem;
+  opacity: 0.6;
+}
+
+/* ---------- Ligas ---------- */
+.league-card {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+  padding: 1.4rem;
+  background: linear-gradient(135deg, var(--surface-2) 0%, var(--surface) 100%);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 1rem;
+}
+.league-emoji {
+  font-size: 3rem;
+  line-height: 1;
+  filter: drop-shadow(0 0 8px rgba(212, 169, 90, 0.4));
+}
+.league-info { flex: 1; }
+.league-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin-bottom: 0.2rem;
+}
+.league-meta {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 0.7rem;
+}
+.league-progress {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+  margin-bottom: 0.3rem;
+}
+.league-progress-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.6s ease;
+}
+.league-next {
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+.league-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.15rem 0.55rem;
+  border-radius: 999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  margin-left: 0.5rem;
+  border: 1px solid currentColor;
+}
+.secret-marker::before {
+  content: '🔒';
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  font-size: 1rem;
+  opacity: 0.6;
+}

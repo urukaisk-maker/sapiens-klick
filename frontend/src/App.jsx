@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   getRoles, getGlobalStats, getRoleStats, getLeaderboard, createSession,
   getScenario, postDecision, getProfile, getComparison, getUserByName,
-  getAllCards, getCardsBatch, getAchievements,
+  getAllCards, getCardsBatch, getAchievements, getLeague,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
@@ -375,6 +375,7 @@ function LeaderboardScreen({ leaderboard, userName }) {
 
 function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
   const [data, setData] = useState(null);
+  const [league, setLeague] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -390,6 +391,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
       .catch((e) => setError(e.message.includes('404')
         ? 'Todavía no hay sesiones con este nombre.' : e.message))
       .finally(() => setLoading(false));
+    getLeague(name).then(setLeague).catch(() => {});
   }, [name]);
 
   const myPosition = name ? leaderboard.findIndex((l) => l.name === name) + 1 : 0;
@@ -400,7 +402,14 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="badge">Perfil</div>
-            <h1 style={{ marginBottom: '.2rem' }}>{name || 'Anónimo'}</h1>
+            <h1 style={{ marginBottom: '.2rem' }}>
+              {name || 'Anónimo'}
+              {league && (
+                <span className="league-badge" style={{ color: league.current.color }}>
+                  {league.current.emoji} {league.current.name}
+                </span>
+              )}
+            </h1>
             {myPosition > 0 && (
               <p className="subtitle" style={{ marginBottom: 0 }}>🏆 Posición #{myPosition} en el leaderboard</p>
             )}
@@ -612,7 +621,6 @@ export default function App() {
           setHistory(nextHist);
         }
 
-        // Chequear logros nuevos al terminar partida
         if (userName) {
           try {
             const aData = await getAchievements(userName);
