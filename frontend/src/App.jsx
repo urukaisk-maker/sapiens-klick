@@ -2,16 +2,18 @@ import { useEffect, useState } from 'react';
 import {
   getRoles, getGlobalStats, getRoleStats, getLeaderboard, createSession,
   getScenario, postDecision, getProfile, getComparison, getUserByName,
-  getAllCards, getCardsBatch,
+  getAllCards, getCardsBatch, getAchievements,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
+import AchievementsScreen from './screens/Achievements';
 
 const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
 const LS_LAST_USER = 'sapiens_klick_last_user';
 const LS_HISTORY = 'sapiens_klick_history';
 const LS_IN_PROGRESS = 'sapiens_klick_in_progress';
+const LS_ACHIEVED = 'sapiens_klick_achieved';
 
 const APP_LINKS = {
   netlify: 'https://silly-boba-dc057e.netlify.app/',
@@ -25,6 +27,7 @@ const NAV_ITEMS = [
   { key: 'home', label: 'Inicio' },
   { key: 'collection', label: 'Colección' },
   { key: 'leaderboard', label: 'Leaderboard' },
+  { key: 'achievements', label: 'Logros' },
   { key: 'stats', label: 'Stats' },
   { key: 'profile', label: 'Perfil' },
   { key: 'about', label: 'Acerca' },
@@ -608,6 +611,23 @@ export default function App() {
           localStorage.setItem(LS_HISTORY, JSON.stringify(nextHist));
           setHistory(nextHist);
         }
+
+        // Chequear logros nuevos al terminar partida
+        if (userName) {
+          try {
+            const aData = await getAchievements(userName);
+            const nowUnlocked = aData.achievements.filter(x => x.unlocked).map(x => x.key);
+            const previouslyUnlocked = JSON.parse(localStorage.getItem(LS_ACHIEVED) || '[]');
+            const newOnes = nowUnlocked.filter(k => !previouslyUnlocked.includes(k));
+            localStorage.setItem(LS_ACHIEVED, JSON.stringify(nowUnlocked));
+            if (newOnes.length > 0) {
+              const first = aData.achievements.find(a => a.key === newOnes[0]);
+              setToast(`🏆 ¡Logro desbloqueado: ${first.emoji} ${first.title}!`);
+              setTimeout(() => setToast(''), 3500);
+            }
+          } catch {}
+        }
+
         clearInProgress();
         setResume(null);
         setPhase('done');
@@ -668,6 +688,8 @@ export default function App() {
       openCollection();
     } else if (key === 'leaderboard') {
       setPhase('leaderboard');
+    } else if (key === 'achievements') {
+      setPhase('achievements');
     } else if (key === 'stats') {
       setPhase('stats');
     } else if (key === 'profile') {
@@ -722,6 +744,9 @@ export default function App() {
         )}
         {phase === 'leaderboard' && (
           <LeaderboardScreen leaderboard={leaderboard} userName={userName} />
+        )}
+        {phase === 'achievements' && (
+          <AchievementsScreen userName={userName} />
         )}
         {phase === 'stats' && <StatsScreen />}
         {phase === 'profile' && (

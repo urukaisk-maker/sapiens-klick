@@ -12,6 +12,7 @@ from scenarios import SCENARIOS
 from cards import CARDS
 from narratives import build_insight
 from variants import VARIANTS
+from achievements import compute_achievements
 from stats import stats_router
 
 
@@ -192,6 +193,10 @@ def get_profile(user_id: int, db: Session = Depends(get_db)):
         "total_decisions": len(decisions), "categories": dict(categories),
         "dominant": dominant, "card_unlocked": unlocked, "insight": insight,
     }
+
+@app.get("/api/achievements/{name}")
+def get_achievements(name: str, db: Session = Depends(get_db)):
+    return compute_achievements(name, db)
 
 
 @app.get("/api/user/{name}")

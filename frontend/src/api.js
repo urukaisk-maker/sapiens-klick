@@ -50,3 +50,5 @@ export const getRoleCategoryStats = () =>
 
 export const getTopCards = () =>
   fetch(`${API_BASE}/stats/top-cards`).then(jsonOrThrow);
+export const getAchievements = (name) =>
+  fetch(`${API_BASE}/achievements/${encodeURIComponent(name)}`).then(jsonOrThrow);
