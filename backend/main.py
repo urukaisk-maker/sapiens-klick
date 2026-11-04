@@ -13,6 +13,7 @@ from cards import CARDS
 from narratives import build_insight
 from variants import VARIANTS
 from achievements import compute_achievements
+from leagues import compute_league
 from stats import stats_router
 
 
@@ -198,7 +199,15 @@ def get_profile(user_id: int, db: Session = Depends(get_db)):
 def get_achievements(name: str, db: Session = Depends(get_db)):
     return compute_achievements(name, db)
 
-
+@app.get("/api/league/{name}")
+def get_league(name: str, db: Session = Depends(get_db)):
+    users = db.query(User).filter(User.name == name).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="Nombre no encontrado")
+    user_ids = [u.id for u in users]
+    decisions_count = (db.query(func.count(Decision.id))
+                       .filter(Decision.user_id.in_(user_ids)).scalar() or 0)
+    return compute_league(decisions_count)
 @app.get("/api/user/{name}")
 def user_by_name(name: str, db: Session = Depends(get_db)):
     users = db.query(User).filter(User.name == name).all()
