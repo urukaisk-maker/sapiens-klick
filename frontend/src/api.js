@@ -42,3 +42,11 @@ export const getHistory = (userIds) =>
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ user_ids: userIds }),
   }).then(jsonOrThrow);
+  export const getGlobalCategoryStats = () =>
+  fetch(`${API_BASE}/stats/global-categories`).then(jsonOrThrow);
+
+export const getRoleCategoryStats = () =>
+  fetch(`${API_BASE}/stats/role-categories`).then(jsonOrThrow);
+
+export const getTopCards = () =>
+  fetch(`${API_BASE}/stats/top-cards`).then(jsonOrThrow);

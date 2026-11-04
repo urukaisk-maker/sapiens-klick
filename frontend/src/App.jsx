@@ -4,6 +4,8 @@ import {
   getScenario, postDecision, getProfile, getComparison, getUserByName,
   getAllCards, getCardsBatch,
 } from './api';
+import StatsScreen from './screens/Stats';
+import ResearcherScreen from './screens/Researcher';
 
 const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
@@ -22,6 +24,7 @@ const NAV_ITEMS = [
   { key: 'home', label: 'Inicio' },
   { key: 'collection', label: 'Colección' },
   { key: 'leaderboard', label: 'Leaderboard' },
+  { key: 'stats', label: 'Stats' },
   { key: 'profile', label: 'Perfil' },
   { key: 'about', label: 'Acerca' },
 ];
@@ -83,6 +86,7 @@ function Footer({ onNavigate }) {
                 <a onClick={() => onNavigate(it.key)}>{it.label}</a>
               </li>
             ))}
+            <li><a onClick={() => onNavigate('researcher')} style={{ opacity: 0.6 }}>Investigador</a></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -191,7 +195,7 @@ function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
           <div className="how-step">
             <div className="how-step-num">01</div>
             <div className="how-step-title">Elige un rol</div>
-            <div className="how-step-desc">Seis arquetipos, cada uno con su propia lógica de decisión.</div>
+            <div className="how-step-desc">Ocho arquetipos, cada uno con su propia lógica de decisión.</div>
           </div>
           <div className="how-step">
             <div className="how-step-num">02</div>
@@ -435,7 +439,7 @@ function AboutScreen() {
           <li>Un <strong>perfil conductual</strong> con tu categoría dominante.</li>
           <li>Una <strong>comparativa</strong> con otros jugadores del mismo rol.</li>
           <li>Un <strong>insight narrativo</strong> conectado con un tema de Sapiens.</li>
-          <li>Una <strong>carta de conocimiento</strong> desbloqueable (25 en total).</li>
+          <li>Una <strong>carta de conocimiento</strong> desbloqueable (35 en total).</li>
         </ul>
 
         <div className="quote-box">
@@ -604,10 +608,14 @@ export default function App() {
       openCollection();
     } else if (key === 'leaderboard') {
       setPhase('leaderboard');
+    } else if (key === 'stats') {
+      setPhase('stats');
     } else if (key === 'profile') {
       setPhase('profile');
     } else if (key === 'about') {
       setPhase('about');
+    } else if (key === 'researcher') {
+      setPhase('researcher');
     }
   }
 
@@ -654,11 +662,13 @@ export default function App() {
         {phase === 'leaderboard' && (
           <LeaderboardScreen leaderboard={leaderboard} userName={userName} />
         )}
+        {phase === 'stats' && <StatsScreen />}
         {phase === 'profile' && (
           <ProfileScreen name={userName} roleStats={roleStats}
             leaderboard={leaderboard} onEditName={editName} />
         )}
         {phase === 'about' && <AboutScreen />}
+        {phase === 'researcher' && <ResearcherScreen />}
       </main>
       <Footer onNavigate={navigateTo} />
       {toast && <div className="toast">{toast}</div>}

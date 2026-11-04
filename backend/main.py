@@ -11,10 +11,11 @@ from models import User, Decision, CardUnlock
 from scenarios import SCENARIOS
 from cards import CARDS
 from narratives import build_insight
+from stats import stats_router
 
 app = FastAPI(title="Sapiens Klick API")
 
-
+app.include_router(stats_router)
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
