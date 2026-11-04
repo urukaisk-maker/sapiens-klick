@@ -197,4 +197,71 @@ SCENARIOS = {
                  {"label": "Volver al mundo, a vivir lo humano", "value": "volver", "category": "hedonista"}]},
         ],
     },
+
+    "politico": {
+        "role": "Político",
+        "emoji": "🏛️",
+        "tagline": "Poder, promesas y traiciones",
+        "intro": (
+            "Año 2026. Eres diputado en un parlamento polarizado. Tienes 4 años "
+            "de mandato y una reelección por delante. Cada decisión que tomes "
+            "ahora será usada en tu contra — o a tu favor — dentro de 4 años."
+        ),
+        "steps": [
+            {"step": 1, "question": "Un periodista te ofrece publicar una exclusiva que hundiría a tu rival.",
+             "options": [
+                 {"label": "Publicarla, la política es así", "value": "publicar", "category": "competitivo"},
+                 {"label": "Rechazarla, no todo vale", "value": "rechazar", "category": "estoico"}]},
+            {"step": 2, "question": "Tu partido te pide votar una ley en la que no crees.",
+             "options": [
+                 {"label": "Votar con el partido (disciplina)", "value": "disciplina", "category": "institucional"},
+                 {"label": "Romper la disciplina y votar según tu conciencia", "value": "romper", "category": "rebelde"}]},
+            {"step": 3, "question": "Una encuesta dice que tu electorado quiere medidas más duras con inmigrantes.",
+             "options": [
+                 {"label": "Adoptar el discurso duro para ganar votos", "value": "duro", "category": "estratega"},
+                 {"label": "Mantener tu posición humanitaria", "value": "humanitario", "category": "empatico"}]},
+            {"step": 4, "question": "Un empresario te ofrece financiar tu campaña a cambio de favores futuros.",
+             "options": [
+                 {"label": "Aceptar el dinero y el pacto", "value": "aceptar", "category": "pragmatico"},
+                 {"label": "Rechazarlo y financiarte con pequeños donantes", "value": "rechazar", "category": "altruista"}]},
+            {"step": 5, "question": "En el último año, puedes impulsar una reforma impopular pero necesaria.",
+             "options": [
+                 {"label": "Impulsarla y arriesgar la reelección", "value": "impulsar", "category": "libre"},
+                 {"label": "Aplazarla y asegurar tu escaño", "value": "aplazar", "category": "seguridad"}]},
+        ],
+    },
+
+    "artista": {
+        "role": "Artista",
+        "emoji": "🎨",
+        "tagline": "Crear entre la libertad y el mercado",
+        "intro": (
+            "Año 2026. Llevas 10 años creando. Tienes una pequeña comunidad que "
+            "te sigue, pero el dinero no llega. El mercado te tienta; tu voz "
+            "interior te dice otra cosa. Cada decisión definirá qué tipo de "
+            "artista serás cuando mires atrás."
+        ),
+        "steps": [
+            {"step": 1, "question": "Una marca importante quiere patrocinar tu próxima obra.",
+             "options": [
+                 {"label": "Aceptar el patrocinio y adaptarte a su brief", "value": "aceptar", "category": "pragmatico"},
+                 {"label": "Rechazarlo y mantener tu libertad creativa", "value": "rechazar", "category": "libre"}]},
+            {"step": 2, "question": "Un crítico influyente destroza tu última exposición.",
+             "options": [
+                 {"label": "Responder públicamente", "value": "responder", "category": "status"},
+                 {"label": "Ignorarlo y seguir trabajando", "value": "ignorar", "category": "estoico"}]},
+            {"step": 3, "question": "Puedes dedicar 6 meses a una obra personal o a 6 encargos rentables.",
+             "options": [
+                 {"label": "Obra personal (sin ingresos)", "value": "personal", "category": "libre"},
+                 {"label": "Encargos rentables (con dinero)", "value": "encargos", "category": "seguridad"}]},
+            {"step": 4, "question": "Te ofrecen una residencia en el extranjero, lejos de tu comunidad.",
+             "options": [
+                 {"label": "Irte y crecer fuera", "value": "irte", "category": "curioso"},
+                 {"label": "Quedarte con tu gente", "value": "quedarte", "category": "leal"}]},
+            {"step": 5, "question": "Al final del año, decides qué tipo de artista quieres ser.",
+             "options": [
+                 {"label": "Artista de masas (éxito y visibilidad)", "value": "masas", "category": "status"},
+                 {"label": "Artista de culto (pocos, pero fieles)", "value": "culto", "category": "altruista"}]},
+        ],
+    },
 }
