@@ -11,7 +11,9 @@ from models import User, Decision, CardUnlock
 from scenarios import SCENARIOS
 from cards import CARDS
 from narratives import build_insight
+from variants import VARIANTS
 from stats import stats_router
+
 
 app = FastAPI(title="Sapiens Klick API")
 
@@ -109,20 +111,39 @@ def leaderboard(db: Session = Depends(get_db)):
     return [{"name": r[0], "sessions": r[1], "decisions": r[2]} for r in rows]
 
 
-@app.post("/api/session/{role}", response_model=SessionResponse)
-def create_session(role: str, name: Optional[str] = None,
-                   db: Session = Depends(get_db)):
-    if role not in SCENARIOS:
-        raise HTTPException(status_code=404, detail="Rol no encontrado")
-    clean = name.strip()[:64] if name else None
-    if clean == "":
-        clean = None
-    user = User(role=role, name=clean)
-    db.add(user)
+@app.post("/api/decision")
+def post_decision(payload: DecisionRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == payload.user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="Usuario no encontrado")
+    decision = Decision(
+        user_id=payload.user_id, step=payload.step,
+        choice=payload.choice, category=payload.category,
+    )
+    db.add(decision)
     db.commit()
-    db.refresh(user)
-    return {"user_id": user.id, "role": role}
+    db.refresh(decision)
 
+    # Calcular el siguiente paso (con variante contextual si aplica)
+    scenario = SCENARIOS.get(user.role)
+    if not scenario:
+        return {"ok": True, "decision_id": decision.id, "next_step": None}
+
+    steps = scenario["steps"]
+    next_step_num = payload.step + 1
+    next_step = next((s for s in steps if s["step"] == next_step_num), None)
+    if not next_step:
+        return {"ok": True, "decision_id": decision.id, "next_step": None}
+
+    # Aplicar variante si el paso siguiente tiene una para la categoría elegida
+    role_variants = VARIANTS.get(user.role, {})
+    step_variants = role_variants.get(next_step_num, {})
+    resolved = dict(next_step)
+    if payload.category in step_variants:
+        resolved["question"] = step_variants[payload.category]
+    resolved.pop("variants", None)
+
+    return {"ok": True, "decision_id": decision.id, "next_step": resolved}
 
 @app.get("/api/scenario/{role}")
 def get_scenario(role: str):

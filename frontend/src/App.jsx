@@ -11,6 +11,7 @@ const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
 const LS_LAST_USER = 'sapiens_klick_last_user';
 const LS_HISTORY = 'sapiens_klick_history';
+const LS_IN_PROGRESS = 'sapiens_klick_in_progress';
 
 const APP_LINKS = {
   netlify: 'https://silly-boba-dc057e.netlify.app/',
@@ -32,6 +33,21 @@ const NAV_ITEMS = [
 const loadHistory = () => {
   try { return JSON.parse(localStorage.getItem(LS_HISTORY) || '[]'); }
   catch { return []; }
+};
+
+const loadInProgress = () => {
+  try {
+    const raw = localStorage.getItem(LS_IN_PROGRESS);
+    return raw ? JSON.parse(raw) : null;
+  } catch { return null; }
+};
+
+const saveInProgress = (state) => {
+  try { localStorage.setItem(LS_IN_PROGRESS, JSON.stringify(state)); } catch {}
+};
+
+const clearInProgress = () => {
+  localStorage.removeItem(LS_IN_PROGRESS);
 };
 
 /* ============ Layout ============ */
@@ -148,7 +164,7 @@ function OnboardingScreen({ onContinue }) {
   );
 }
 
-function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
+function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, onResume, onDiscard }) {
   return (
     <div className="fade-in">
       <section className="hero">
@@ -176,6 +192,18 @@ function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
         )}
       </section>
 
+      {resume && (
+        <div className="banner">
+          <span>
+            🎮 Tienes una partida sin terminar: <strong>{resume.scenario.role}</strong> · Paso {resume.currentStep.step}/{resume.scenario.steps.length}
+          </span>
+          <div style={{ display: 'flex', gap: '.4rem' }}>
+            <button className="btn small" onClick={onResume}>Continuar</button>
+            <button className="btn ghost small" onClick={onDiscard}>Descartar</button>
+          </div>
+        </div>
+      )}
+
       <h2 style={{ marginBottom: '0.4rem' }}>Elige un arquetipo</h2>
       <p className="subtitle">Cada rol es una "ficción colectiva" distinta.</p>
 
@@ -200,7 +228,7 @@ function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
           <div className="how-step">
             <div className="how-step-num">02</div>
             <div className="how-step-title">Decide 5 veces</div>
-            <div className="how-step-desc">Dilemas que revelan sesgos, prioridades y formas de cooperar.</div>
+            <div className="how-step-desc">Tus elecciones condicionan lo que viene después.</div>
           </div>
           <div className="how-step">
             <div className="how-step-num">03</div>
@@ -220,14 +248,13 @@ function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
   );
 }
 
-function ScenarioScreen({ scenario, currentStep, submitting, onChoose }) {
-  const step = scenario.steps[currentStep];
+function ScenarioScreen({ scenario, step, submitting, onChoose }) {
   const total = scenario.steps.length;
   return (
-    <div className="card fade-in" key={currentStep}>
-      <ProgressBar current={currentStep} total={total} />
+    <div className="card fade-in" key={step.step}>
+      <ProgressBar current={step.step - 1} total={total} />
       <div className="step-label">
-        <span>Paso {currentStep + 1} de {total}</span>
+        <span>Paso {step.step} de {total}</span>
         <span>{scenario.role}</span>
       </div>
       <p className="intro">{scenario.intro}</p>
@@ -485,8 +512,9 @@ export default function App() {
   const [roleStats, setRoleStats] = useState([]);
   const [leaderboard, setLeaderboard] = useState([]);
   const [scenario, setScenario] = useState(null);
+  const [roleKey, setRoleKey] = useState(null);
   const [userId, setUserId] = useState(null);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(null);
   const [submitting, setSubmitting] = useState(false);
   const [profile, setProfile] = useState(null);
   const [comparison, setComparison] = useState(null);
@@ -494,6 +522,7 @@ export default function App() {
   const [allCards, setAllCards] = useState([]);
   const [userCards, setUserCards] = useState([]);
   const [history, setHistory] = useState([]);
+  const [resume, setResume] = useState(null);
   const [toast, setToast] = useState('');
 
   useEffect(() => {
@@ -504,6 +533,7 @@ export default function App() {
     const last = localStorage.getItem(LS_LAST_USER);
     if (last) setUserId(Number(last));
     setHistory(loadHistory());
+    setResume(loadInProgress());
 
     getRoles().then(setRoles).catch(() => {});
     getGlobalStats().then(setGlobalStats).catch(() => {});
@@ -532,12 +562,15 @@ export default function App() {
     const s = await createSession(r.key, userName || undefined);
     const sc = await getScenario(r.key);
     setScenario(sc);
+    setRoleKey(r.key);
     setUserId(s.user_id);
     localStorage.setItem(LS_LAST_USER, String(s.user_id));
-    setCurrentStep(0);
+    setCurrentStep(sc.steps[0]);
     setProfile(null);
     setComparison(null);
     setUnlockedCard(null);
+    clearInProgress();
+    setResume(null);
     setPhase('playing');
   }
 
@@ -545,14 +578,23 @@ export default function App() {
     if (submitting) return;
     setSubmitting(true);
     try {
-      await postDecision({
+      const result = await postDecision({
         user_id: userId,
-        step: scenario.steps[currentStep].step,
+        step: currentStep.step,
         choice: option.value,
         category: option.category,
       });
-      const next = currentStep + 1;
-      if (next >= scenario.steps.length) {
+
+      if (result.next_step) {
+        setCurrentStep(result.next_step);
+        saveInProgress({
+          userId,
+          roleKey,
+          scenario,
+          currentStep: result.next_step,
+          savedAt: new Date().toISOString(),
+        });
+      } else {
         const [p, comp] = await Promise.all([getProfile(userId), getComparison(userId)]);
         setProfile(p);
         setComparison(comp);
@@ -566,12 +608,12 @@ export default function App() {
           localStorage.setItem(LS_HISTORY, JSON.stringify(nextHist));
           setHistory(nextHist);
         }
+        clearInProgress();
+        setResume(null);
         setPhase('done');
         getGlobalStats().then(setGlobalStats).catch(() => {});
         getRoleStats().then(setRoleStats).catch(() => {});
         getLeaderboard().then(setLeaderboard).catch(() => {});
-      } else {
-        setCurrentStep(next);
       }
     } finally {
       setSubmitting(false);
@@ -596,11 +638,29 @@ export default function App() {
       .catch(() => { setToast('No se pudo copiar'); setTimeout(() => setToast(''), 2200); });
   }
 
+  function resumeGame() {
+    if (!resume) return;
+    setUserId(resume.userId);
+    setRoleKey(resume.roleKey);
+    setScenario(resume.scenario);
+    setCurrentStep(resume.currentStep);
+    setProfile(null);
+    setComparison(null);
+    setUnlockedCard(null);
+    setResume(null);
+    setPhase('playing');
+  }
+
+  function discardResume() {
+    clearInProgress();
+    setResume(null);
+  }
+
   function navigateTo(key) {
     if (key === 'home') {
       setPhase('home');
       setScenario(null);
-      setCurrentStep(0);
+      setCurrentStep(null);
       setProfile(null);
       setComparison(null);
       setUnlockedCard(null);
@@ -646,10 +706,11 @@ export default function App() {
       <main className="app-main">
         {phase === 'home' && (
           <HomeScreen roles={roles} globalStats={globalStats} history={history}
-            onStart={startRole} onNavigate={navigateTo} />
+            resume={resume} onStart={startRole} onNavigate={navigateTo}
+            onResume={resumeGame} onDiscard={discardResume} />
         )}
-        {phase === 'playing' && scenario && (
-          <ScenarioScreen scenario={scenario} currentStep={currentStep}
+        {phase === 'playing' && scenario && currentStep && (
+          <ScenarioScreen scenario={scenario} step={currentStep}
             submitting={submitting} onChoose={choose} />
         )}
         {phase === 'done' && profile && (
