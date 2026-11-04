@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import {
   getRoles, getGlobalStats, getRoleStats, getLeaderboard, createSession,
   getScenario, postDecision, getProfile, getComparison, getUserByName,
-  getAllCards, getCardsBatch, getHistory,
+  getAllCards, getCardsBatch,
 } from './api';
 
 const LS_NAME = 'sapiens_klick_name';
@@ -10,23 +10,96 @@ const LS_ONBOARDED = 'sapiens_klick_onboarded';
 const LS_LAST_USER = 'sapiens_klick_last_user';
 const LS_HISTORY = 'sapiens_klick_history';
 
+const APP_LINKS = {
+  netlify: 'https://silly-boba-dc057e.netlify.app/',
+  github: 'https://github.com/urukaisk-maker',
+  repo: 'https://github.com/urukaisk-maker/sapiens-klick',
+  developer: 'Manuel Casimiro Carrasco',
+  alias: 'Urukais Klick',
+};
+
+const NAV_ITEMS = [
+  { key: 'home', label: 'Inicio' },
+  { key: 'collection', label: 'Colección' },
+  { key: 'leaderboard', label: 'Leaderboard' },
+  { key: 'profile', label: 'Perfil' },
+  { key: 'about', label: 'Acerca' },
+];
+
 const loadHistory = () => {
   try { return JSON.parse(localStorage.getItem(LS_HISTORY) || '[]'); }
   catch { return []; }
 };
 
-/* ---------- Shared ---------- */
-function TopBar({ onHome, name, onProfile }) {
+/* ============ Layout ============ */
+
+function Navigation({ current, onNavigate, userName }) {
   return (
-    <div className="topbar">
-      <div className="brand" onClick={onHome}>
+    <nav className="nav">
+      <div className="nav-brand" onClick={() => onNavigate('home')}>
         <div className="brand-mark" />
         <div className="brand-name">Sapiens Klick</div>
       </div>
-      <div style={{ display: 'flex', gap: '.5rem', alignItems: 'center' }}>
-        {name && <span className="user-chip" onClick={onProfile}>👤 {name}</span>}
+      <div className="nav-links">
+        {NAV_ITEMS.map((it) => (
+          <button
+            key={it.key}
+            className={`nav-link ${current === it.key ? 'active' : ''}`}
+            onClick={() => onNavigate(it.key)}
+          >
+            {it.label}
+          </button>
+        ))}
       </div>
-    </div>
+      {userName && (
+        <span className="user-chip" onClick={() => onNavigate('profile')}>
+          👤 {userName}
+        </span>
+      )}
+    </nav>
+  );
+}
+
+function Footer({ onNavigate }) {
+  const year = new Date().getFullYear();
+  return (
+    <footer className="footer">
+      <div className="footer-grid">
+        <div className="footer-col">
+          <div className="footer-brand">
+            <div className="brand-mark small" />
+            <span>Sapiens Klick</span>
+          </div>
+          <p className="footer-desc">
+            Simulador interactivo de las ficciones colectivas que nos gobiernan.
+            Inspirado en <em>Sapiens: De animales a dioses</em> de Yuval Noah Harari.
+          </p>
+        </div>
+        <div className="footer-col">
+          <h5>Navegar</h5>
+          <ul>
+            {NAV_ITEMS.map((it) => (
+              <li key={it.key}>
+                <a onClick={() => onNavigate(it.key)}>{it.label}</a>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="footer-col">
+          <h5>Proyecto</h5>
+          <ul>
+            <li><a href={APP_LINKS.netlify} target="_blank" rel="noopener noreferrer">Demo ↗</a></li>
+            <li><a href={APP_LINKS.github} target="_blank" rel="noopener noreferrer">Autor ↗</a></li>
+            <li><a href={APP_LINKS.repo} target="_blank" rel="noopener noreferrer">Repositorio ↗</a></li>
+          </ul>
+        </div>
+      </div>
+      <div className="footer-bottom">
+        <span>© {year} Sapiens Klick</span>
+        <span>Desarrollado por <strong>{APP_LINKS.developer}</strong></span>
+        <span>{APP_LINKS.alias}</span>
+      </div>
+    </footer>
   );
 }
 
@@ -38,7 +111,8 @@ function ProgressBar({ current, total }) {
   );
 }
 
-/* ---------- Onboarding ---------- */
+/* ============ Screens ============ */
+
 function OnboardingScreen({ onContinue }) {
   const [name, setName] = useState('');
   return (
@@ -47,8 +121,8 @@ function OnboardingScreen({ onContinue }) {
       <h1 style={{ marginBottom: '.6rem' }}>Sapiens Klick</h1>
       <p className="subtitle">Simulador de las ficciones colectivas que nos gobiernan.</p>
       <p style={{ color: 'var(--muted)', marginBottom: '1.2rem', lineHeight: 1.6 }}>
-        Tu nombre agrupará todas tus partidas, desbloquea el leaderboard y
-        guarda tu perfil. Si prefieres el anonimato, deja vacío.
+        Tu nombre agrupará todas tus partidas, desbloquea el leaderboard y guarda tu perfil.
+        Si prefieres el anonimato, déjalo vacío.
       </p>
       <label style={{ display: 'block', marginBottom: '.5rem', color: 'var(--muted)', fontSize: '.9rem' }}>
         ¿Cómo te llamas?
@@ -70,30 +144,36 @@ function OnboardingScreen({ onContinue }) {
   );
 }
 
-/* ---------- Home ---------- */
-function HomeScreen({ roles, globalStats, leaderboard, history, onStart, onProfile }) {
+function HomeScreen({ roles, globalStats, history, onStart, onNavigate }) {
   return (
     <div className="fade-in">
-      <h1>Elige un arquetipo</h1>
-      <p className="subtitle">
-        Cada rol te sumerge en una "ficción colectiva" distinta. Tus decisiones
-        se registran de forma anónima.
-      </p>
+      <section className="hero">
+        <div className="badge">Sapiens Klick</div>
+        <h1 className="hero-title">Las ficciones que nos gobiernan</h1>
+        <p className="hero-subtitle">
+          Elige un arquetipo, toma cinco decisiones y descubre cómo tu forma de
+          decidir se conecta con las narrativas que sostienen la civilización.
+        </p>
+        {globalStats && (
+          <div className="hero-stats">
+            <div className="hero-stat">
+              <span className="hero-stat-num">{globalStats.total_users}</span>
+              <span className="hero-stat-label">jugadores</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">{globalStats.total_decisions}</span>
+              <span className="hero-stat-label">decisiones</span>
+            </div>
+            <div className="hero-stat">
+              <span className="hero-stat-num">{globalStats.total_cards}</span>
+              <span className="hero-stat-label">cartas</span>
+            </div>
+          </div>
+        )}
+      </section>
 
-      {globalStats && (
-        <div className="meta">
-          <span><strong>{globalStats.total_users}</strong> personas han jugado</span>
-          <span><strong>{globalStats.total_decisions}</strong> decisiones registradas</span>
-          <span><strong>{globalStats.total_cards}</strong> cartas desbloqueadas</span>
-        </div>
-      )}
-
-      {history.length > 0 && (
-        <div className="banner">
-          <span>Has jugado <strong>{history.length}</strong> {history.length === 1 ? 'partida' : 'partidas'}.</span>
-          <button className="btn ghost small" onClick={onProfile}>Mi perfil</button>
-        </div>
-      )}
+      <h2 style={{ marginBottom: '0.4rem' }}>Elige un arquetipo</h2>
+      <p className="subtitle">Cada rol es una "ficción colectiva" distinta.</p>
 
       <div className="roles-grid">
         {roles.map((r) => (
@@ -105,24 +185,37 @@ function HomeScreen({ roles, globalStats, leaderboard, history, onStart, onProfi
         ))}
       </div>
 
-      {leaderboard.length > 0 && (
-        <div className="card" style={{ marginTop: '1.5rem' }}>
-          <h3>🏆 Leaderboard</h3>
-          <p className="subtitle">Top jugadores por decisiones totales.</p>
-          {leaderboard.slice(0, 5).map((l, i) => (
-            <div key={l.name} className="leaderboard-row">
-              <span className="leaderboard-pos">#{i + 1}</span>
-              <span className="leaderboard-name">{l.name}</span>
-              <span className="leaderboard-meta">{l.decisions} decisiones · {l.sessions} partidas</span>
-            </div>
-          ))}
+      <section style={{ marginTop: '3rem' }}>
+        <h2>Cómo funciona</h2>
+        <div className="how-it-works">
+          <div className="how-step">
+            <div className="how-step-num">01</div>
+            <div className="how-step-title">Elige un rol</div>
+            <div className="how-step-desc">Seis arquetipos, cada uno con su propia lógica de decisión.</div>
+          </div>
+          <div className="how-step">
+            <div className="how-step-num">02</div>
+            <div className="how-step-title">Decide 5 veces</div>
+            <div className="how-step-desc">Dilemas que revelan sesgos, prioridades y formas de cooperar.</div>
+          </div>
+          <div className="how-step">
+            <div className="how-step-num">03</div>
+            <div className="how-step-title">Descubre tu huella</div>
+            <div className="how-step-desc">Perfil, comparativa, insight narrativo y una carta desbloqueable.</div>
+          </div>
+        </div>
+      </section>
+
+      {history.length > 0 && (
+        <div className="banner" style={{ marginTop: '2rem' }}>
+          <span>Has jugado <strong>{history.length}</strong> {history.length === 1 ? 'partida' : 'partidas'}.</span>
+          <button className="btn ghost small" onClick={() => onNavigate('profile')}>Mi perfil</button>
         </div>
       )}
     </div>
   );
 }
 
-/* ---------- Playing ---------- */
 function ScenarioScreen({ scenario, currentStep, submitting, onChoose }) {
   const step = scenario.steps[currentStep];
   const total = scenario.steps.length;
@@ -144,7 +237,6 @@ function ScenarioScreen({ scenario, currentStep, submitting, onChoose }) {
   );
 }
 
-/* ---------- Result ---------- */
 function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollection, onShare }) {
   return (
     <>
@@ -156,9 +248,7 @@ function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollecti
           <span>Decisiones: <strong>{profile.total_decisions}</strong></span>
           <span>Dominante: <strong>{profile.dominant}</strong></span>
         </div>
-        {profile.insight && (
-          <div className="insight-box"><p>{profile.insight}</p></div>
-        )}
+        {profile.insight && <div className="insight-box"><p>{profile.insight}</p></div>}
       </div>
 
       {comparison && (
@@ -197,12 +287,14 @@ function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollecti
   );
 }
 
-/* ---------- Collection ---------- */
-function CollectionScreen({ allCards, unlockedCards, onBack }) {
+function CollectionScreen({ allCards, unlockedCards }) {
   return (
-    <div className="card fade-in">
-      <h2>Mi colección</h2>
-      <p className="subtitle">{unlockedCards.length} de {allCards.length} cartas desbloqueadas</p>
+    <div className="fade-in">
+      <div className="card">
+        <div className="badge">Colección</div>
+        <h1 style={{ marginBottom: '.4rem' }}>Mis cartas</h1>
+        <p className="subtitle">{unlockedCards.length} de {allCards.length} cartas desbloqueadas</p>
+      </div>
       <div className="grid-cards">
         {allCards.map((c) => {
           const unlocked = unlockedCards.includes(c.key);
@@ -217,30 +309,56 @@ function CollectionScreen({ allCards, unlockedCards, onBack }) {
           );
         })}
       </div>
-      <div className="actions">
-        <button className="btn" onClick={onBack}>Volver al inicio</button>
+    </div>
+  );
+}
+
+function LeaderboardScreen({ leaderboard, userName }) {
+  return (
+    <div className="fade-in">
+      <div className="card">
+        <div className="badge">Ranking</div>
+        <h1 style={{ marginBottom: '.4rem' }}>Leaderboard</h1>
+        <p className="subtitle">Top 10 jugadores por decisiones totales.</p>
+        {leaderboard.length === 0 && (
+          <p style={{ color: 'var(--muted)' }}>Nadie ha jugado todavía con nombre. ¡Sé el primero!</p>
+        )}
+        {leaderboard.map((l, i) => {
+          const isMe = userName && l.name === userName;
+          const posClass = i === 0 ? 'lb-pos-1' : i === 1 ? 'lb-pos-2' : i === 2 ? 'lb-pos-3' : '';
+          return (
+            <div key={l.name} className="leaderboard-row" style={isMe ? { background: 'rgba(212,169,90,.08)' } : {}}>
+              <span className={`leaderboard-pos ${posClass}`}>#{i + 1}</span>
+              <span className="leaderboard-name">{l.name}{isMe ? ' (tú)' : ''}</span>
+              <span className="leaderboard-meta">{l.decisions} decisiones · {l.sessions} partidas</span>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
 }
 
-/* ---------- Profile ---------- */
-function ProfileScreen({ name, roleStats, leaderboard, onBack, onEditName }) {
+function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    if (!name) return;
+    if (!name) {
+      setError('Estás jugando como anónimo. Configura un nombre para tener perfil persistente.');
+      return;
+    }
     setLoading(true);
     setError('');
     getUserByName(name)
       .then(setData)
-      .catch((e) => setError(e.message.includes('404') ? 'Todavía no hay sesiones con este nombre.' : e.message))
+      .catch((e) => setError(e.message.includes('404')
+        ? 'Todavía no hay sesiones con este nombre.' : e.message))
       .finally(() => setLoading(false));
   }, [name]);
 
-  const myPosition = leaderboard.findIndex((l) => l.name === name) + 1;
+  const myPosition = name ? leaderboard.findIndex((l) => l.name === name) + 1 : 0;
 
   return (
     <div className="fade-in">
@@ -248,7 +366,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onBack, onEditName }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="badge">Perfil</div>
-            <h2 style={{ marginBottom: '.2rem' }}>{name || 'Anónimo'}</h2>
+            <h1 style={{ marginBottom: '.2rem' }}>{name || 'Anónimo'}</h1>
             {myPosition > 0 && (
               <p className="subtitle" style={{ marginBottom: 0 }}>🏆 Posición #{myPosition} en el leaderboard</p>
             )}
@@ -266,7 +384,6 @@ function ProfileScreen({ name, roleStats, leaderboard, onBack, onEditName }) {
               <span><strong>{data.decisions_count}</strong> decisiones</span>
               <span><strong>{data.cards_unlocked.length}</strong> cartas</span>
             </div>
-
             <h3 style={{ marginTop: '1.5rem' }}>Tus partidas</h3>
             {data.sessions.length === 0 && <p style={{ color: 'var(--muted)' }}>Ninguna todavía.</p>}
             {data.sessions.map((s, i) => (
@@ -294,15 +411,67 @@ function ProfileScreen({ name, roleStats, leaderboard, onBack, onEditName }) {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
 
-      <div className="actions">
-        <button className="btn" onClick={onBack}>Volver al inicio</button>
+function AboutScreen() {
+  return (
+    <div className="fade-in">
+      <div className="card">
+        <div className="badge">Acerca</div>
+        <h1>¿Qué es Sapiens Klick?</h1>
+        <p className="about-text">
+          Un simulador interactivo inspirado en <em>Sapiens: De animales a dioses</em>, el libro
+          de Yuval Noah Harari. La tesis central del libro es que los humanos dominamos el
+          planeta porque podemos creer —y hacer creer a otros— en ficciones colectivas:
+          dioses, naciones, dinero, empresas.
+        </p>
+        <p className="about-text">
+          Sapiens Klick convierte esa tesis en experiencia: eliges un arquetipo y te enfrentas
+          a cinco dilemas. Al final obtienes:
+        </p>
+        <ul className="about-list">
+          <li>Un <strong>perfil conductual</strong> con tu categoría dominante.</li>
+          <li>Una <strong>comparativa</strong> con otros jugadores del mismo rol.</li>
+          <li>Un <strong>insight narrativo</strong> conectado con un tema de Sapiens.</li>
+          <li>Una <strong>carta de conocimiento</strong> desbloqueable (25 en total).</li>
+        </ul>
+
+        <div className="quote-box">
+          "Los sapiens pueden cooperar de manera muy flexible con un número ilimitado de
+          extraños gracias a las historias que inventan y creen."
+          <span className="quote-author">— Yuval Noah Harari, <em>Sapiens</em></span>
+        </div>
+      </div>
+
+      <div className="card">
+        <h3>Sobre el autor</h3>
+        <p className="about-text">
+          <strong>{APP_LINKS.developer}</strong>, también conocido como <strong>{APP_LINKS.alias}</strong>.
+        </p>
+        <div className="actions">
+          <a className="btn" href={APP_LINKS.netlify} target="_blank" rel="noopener noreferrer">Ver demo ↗</a>
+          <a className="btn ghost" href={APP_LINKS.github} target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          <a className="btn ghost" href={APP_LINKS.repo} target="_blank" rel="noopener noreferrer">Repositorio ↗</a>
+        </div>
+      </div>
+
+      <div className="card">
+        <h3>Stack técnico</h3>
+        <div className="tech-grid">
+          <div className="tech-item"><span className="tech-label">Backend</span><span className="tech-value">Python + FastAPI</span></div>
+          <div className="tech-item"><span className="tech-label">Frontend</span><span className="tech-value">React + Vite</span></div>
+          <div className="tech-item"><span className="tech-label">Base de datos</span><span className="tech-value">PostgreSQL 16</span></div>
+          <div className="tech-item"><span className="tech-label">Infraestructura</span><span className="tech-value">Docker Compose</span></div>
+        </div>
       </div>
     </div>
   );
 }
 
-/* ---------- App ---------- */
+/* ============ App ============ */
+
 export default function App() {
   const [phase, setPhase] = useState('home');
   const [onboarded, setOnboarded] = useState(false);
@@ -387,7 +556,6 @@ export default function App() {
           const cards = await getAllCards();
           setUnlockedCard(cards.find((c) => c.key === p.card_unlocked) || null);
         }
-        // Persistir en historial local
         const current = loadHistory();
         if (!current.find((h) => h.user_id === userId)) {
           const nextHist = [...current, { user_id: userId, role: scenario.role, date: new Date().toISOString() }];
@@ -418,67 +586,81 @@ export default function App() {
 
   function shareResult() {
     if (!profile) return;
-    const text = `He jugado Sapiens Klick como ${profile.role}. Mi categoría dominante: ${profile.dominant}. ¿Y tú cómo decides?`;
+    const text = `He jugado Sapiens Klick como ${profile.role}. Mi categoría dominante: ${profile.dominant}. ¿Y tú cómo decides? ${APP_LINKS.netlify}`;
     navigator.clipboard.writeText(text)
       .then(() => { setToast('Resultado copiado'); setTimeout(() => setToast(''), 2200); })
       .catch(() => { setToast('No se pudo copiar'); setTimeout(() => setToast(''), 2200); });
   }
 
-  function goHome() {
-    setPhase('home');
-    setScenario(null);
-    setCurrentStep(0);
-    setProfile(null);
-    setComparison(null);
-    setUnlockedCard(null);
+  function navigateTo(key) {
+    if (key === 'home') {
+      setPhase('home');
+      setScenario(null);
+      setCurrentStep(0);
+      setProfile(null);
+      setComparison(null);
+      setUnlockedCard(null);
+    } else if (key === 'collection') {
+      openCollection();
+    } else if (key === 'leaderboard') {
+      setPhase('leaderboard');
+    } else if (key === 'profile') {
+      setPhase('profile');
+    } else if (key === 'about') {
+      setPhase('about');
+    }
   }
+
+  const goHome = () => navigateTo('home');
 
   if (!onboarded) {
     return (
       <div className="app">
-        <div className="topbar"><div className="brand"><div className="brand-mark" /><div className="brand-name">Sapiens Klick</div></div></div>
-        <OnboardingScreen onContinue={handleOnboarding} />
+        <nav className="nav">
+          <div className="nav-brand">
+            <div className="brand-mark" />
+            <div className="brand-name">Sapiens Klick</div>
+          </div>
+        </nav>
+        <main className="app-main">
+          <OnboardingScreen onContinue={handleOnboarding} />
+        </main>
+        <Footer onNavigate={() => {}} />
       </div>
     );
   }
 
+  const navCurrent = ['playing', 'done'].includes(phase) ? 'home' : phase;
+
   return (
     <div className="app">
-      <TopBar onHome={goHome} name={userName} onProfile={() => setPhase('profile')} />
-
-      {phase === 'home' && (
-        <HomeScreen
-          roles={roles} globalStats={globalStats} leaderboard={leaderboard}
-          history={history} onStart={startRole}
-          onProfile={() => setPhase('profile')}
-        />
-      )}
-
-      {phase === 'playing' && scenario && (
-        <ScenarioScreen
-          scenario={scenario} currentStep={currentStep}
-          submitting={submitting} onChoose={choose}
-        />
-      )}
-
-      {phase === 'done' && profile && (
-        <ResultScreen
-          profile={profile} comparison={comparison} unlockedCard={unlockedCard}
-          onRestart={goHome} onCollection={openCollection} onShare={shareResult}
-        />
-      )}
-
-      {phase === 'collection' && (
-        <CollectionScreen allCards={allCards} unlockedCards={userCards} onBack={goHome} />
-      )}
-
-      {phase === 'profile' && (
-        <ProfileScreen
-          name={userName} roleStats={roleStats} leaderboard={leaderboard}
-          onBack={goHome} onEditName={editName}
-        />
-      )}
-
+      <Navigation current={navCurrent} onNavigate={navigateTo} userName={userName} />
+      <main className="app-main">
+        {phase === 'home' && (
+          <HomeScreen roles={roles} globalStats={globalStats} history={history}
+            onStart={startRole} onNavigate={navigateTo} />
+        )}
+        {phase === 'playing' && scenario && (
+          <ScenarioScreen scenario={scenario} currentStep={currentStep}
+            submitting={submitting} onChoose={choose} />
+        )}
+        {phase === 'done' && profile && (
+          <ResultScreen profile={profile} comparison={comparison} unlockedCard={unlockedCard}
+            onRestart={goHome} onCollection={openCollection} onShare={shareResult} />
+        )}
+        {phase === 'collection' && (
+          <CollectionScreen allCards={allCards} unlockedCards={userCards} />
+        )}
+        {phase === 'leaderboard' && (
+          <LeaderboardScreen leaderboard={leaderboard} userName={userName} />
+        )}
+        {phase === 'profile' && (
+          <ProfileScreen name={userName} roleStats={roleStats}
+            leaderboard={leaderboard} onEditName={editName} />
+        )}
+        {phase === 'about' && <AboutScreen />}
+      </main>
+      <Footer onNavigate={navigateTo} />
       {toast && <div className="toast">{toast}</div>}
     </div>
   );
