@@ -7,6 +7,9 @@ import {
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
 import AchievementsScreen from './screens/Achievements';
+import NotFound from './screens/NotFound';
+import { SkeletonCard } from './components/Skeleton';
+import { fireConfetti } from './utils/confetti';
 
 const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
@@ -106,6 +109,7 @@ function Footer({ onNavigate }) {
               </li>
             ))}
             <li><a onClick={() => onNavigate('researcher')} style={{ opacity: 0.6 }}>Investigador</a></li>
+            <li><a onClick={() => onNavigate('notfound')} style={{ opacity: 0.35, fontSize: '0.78rem' }}>404</a></li>
           </ul>
         </div>
         <div className="footer-col">
@@ -417,7 +421,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
           <button className="btn ghost small" onClick={onEditName}>Cambiar nombre</button>
         </div>
 
-        {loading && <p style={{ marginTop: '1rem' }}>Cargando…</p>}
+        {loading && <div style={{ marginTop: '1rem' }}><SkeletonCard /></div>}
         {error && <p style={{ color: 'var(--muted)', marginTop: '1rem' }}>{error}</p>}
 
         {data && (
@@ -612,7 +616,9 @@ export default function App() {
         setComparison(comp);
         if (p.card_unlocked) {
           const cards = await getAllCards();
-          setUnlockedCard(cards.find((c) => c.key === p.card_unlocked) || null);
+          const found = cards.find((c) => c.key === p.card_unlocked) || null;
+          setUnlockedCard(found);
+          if (found) fireConfetti();
         }
         const current = loadHistory();
         if (!current.find((h) => h.user_id === userId)) {
@@ -706,6 +712,8 @@ export default function App() {
       setPhase('about');
     } else if (key === 'researcher') {
       setPhase('researcher');
+    } else if (key === 'notfound') {
+      setPhase('notfound');
     }
   }
 
@@ -734,6 +742,7 @@ export default function App() {
     <div className="app">
       <Navigation current={navCurrent} onNavigate={navigateTo} userName={userName} />
       <main className="app-main">
+        <div className="screen" key={phase}>
         {phase === 'home' && (
           <HomeScreen roles={roles} globalStats={globalStats} history={history}
             resume={resume} onStart={startRole} onNavigate={navigateTo}
@@ -763,6 +772,8 @@ export default function App() {
         )}
         {phase === 'about' && <AboutScreen />}
         {phase === 'researcher' && <ResearcherScreen />}
+        {phase === 'notfound' && <NotFound onHome={goHome} />}
+        </div>
       </main>
       <Footer onNavigate={navigateTo} />
       {toast && <div className="toast">{toast}</div>}

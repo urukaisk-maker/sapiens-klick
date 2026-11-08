@@ -815,3 +815,37 @@ code {
   font-size: 1rem;
   opacity: 0.6;
 }
+/* ---------- Skeletons ---------- */
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+.skeleton-card { pointer-events: none; }
+.skeleton-line {
+  height: 14px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #1e1e27 0%, #2b2b36 40%, #1e1e27 80%);
+  background-size: 800px 100%;
+  animation: shimmer 1.4s linear infinite;
+  margin-bottom: 0.7rem;
+}
+.skeleton-line-lg { height: 22px; width: 60%; }
+.skeleton-line-sm { height: 10px; width: 40%; }
+
+/* ---------- NotFound ---------- */
+.notfound { text-align: center; padding: 4rem 1rem; }
+.notfound-code {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 8rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 60px rgba(212, 169, 90, 0.3);
+}
+.notfound h1 { font-size: 2rem; margin-bottom: 0.6rem; }
+.notfound .subtitle { margin-bottom: 2rem; }
+.notfound .actions { justify-content: center; }
+
+/* ---------- Transición entre pantallas ---------- */
+.screen { animation: fadeUp 0.35s ease both; }

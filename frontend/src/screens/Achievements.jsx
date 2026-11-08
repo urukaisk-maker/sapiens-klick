@@ -1,5 +1,7 @@
+
 import { useEffect, useState } from 'react';
 import { getAchievements, getLeague } from '../api';
+import { SkeletonGrid, SkeletonCard } from '../components/Skeleton';
 
 export default function AchievementsScreen({ userName }) {
   const [data, setData] = useState(null);
@@ -25,7 +27,14 @@ export default function AchievementsScreen({ userName }) {
     );
   }
 
-  if (loading) return <div className="card">Cargando logros…</div>;
+    if (loading) {
+    return (
+      <div className="fade-in">
+        <SkeletonCard />
+        <SkeletonGrid count={8} />
+      </div>
+    );
+  }
   if (!data) return <div className="card">Sin datos.</div>;
 
   const visible = data.achievements.filter((a) => !a.secret);
