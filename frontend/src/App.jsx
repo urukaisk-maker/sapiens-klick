@@ -12,6 +12,12 @@ import NotFound from './screens/NotFound';
 import { SkeletonCard } from './components/Skeleton';
 import { fireConfetti } from './utils/confetti';
 import Avatar from './components/Avatar';
+import Embers from './components/Embers';
+import { fireBlood } from './utils/bloodSplash';
+import {
+  isSoundEnabled, setSoundEnabled,
+  playClick, playSlash, playVictory, playBlood,
+} from './utils/sounds';
 
 const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
@@ -20,6 +26,8 @@ const LS_HISTORY = 'sapiens_klick_history';
 const LS_IN_PROGRESS = 'sapiens_klick_in_progress';
 const LS_ACHIEVED = 'sapiens_klick_achieved';
 const LS_THEME = 'sapiens_klick_theme';
+
+const AGGRESSIVE_CATS = ['agresivo', 'traicion', 'ambicion'];
 
 const APP_LINKS = {
   netlify: 'https://silly-boba-dc057e.netlify.app/',
@@ -61,12 +69,12 @@ const clearInProgress = () => {
 
 /* ============ Layout ============ */
 
-function Navigation({ current, onNavigate, userName, theme, onToggleTheme }) {
+function Navigation({ current, onNavigate, userName, theme, onToggleTheme, soundOn, onToggleSound }) {
   return (
     <nav className="nav">
       <div className="nav-brand" onClick={() => onNavigate('home')}>
         <div className="brand-mark" />
-        <div className="brand-name">Sapiens Klick</div>
+        <div className="brand-name">Urukais Klick</div>
       </div>
       <div className="nav-links">
         {NAV_ITEMS.map((it) => (
@@ -80,6 +88,13 @@ function Navigation({ current, onNavigate, userName, theme, onToggleTheme }) {
         ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+        <button
+          className="sound-toggle"
+          onClick={onToggleSound}
+          title={soundOn ? 'Silenciar efectos' : 'Activar efectos'}
+        >
+          {soundOn ? '🔊' : '🔇'}
+        </button>
         <button
           className="theme-toggle"
           onClick={onToggleTheme}
@@ -110,11 +125,11 @@ function Footer({ onNavigate }) {
         <div className="footer-col">
           <div className="footer-brand">
             <div className="brand-mark small" />
-            <span>Sapiens Klick</span>
+            <span>Urukais Klick</span>
           </div>
           <p className="footer-desc">
-            Simulador interactivo de las ficciones colectivas que nos gobiernan.
-            Inspirado en <em>Sapiens: De animales a dioses</em> de Yuval Noah Harari.
+            Simulador de decisiones en las Tierras Oscuras. Encarna a un orco del clan
+            Urukais Klick y descubre qué tipo de guerrero habita en ti.
           </p>
         </div>
         <div className="footer-col">
@@ -139,7 +154,7 @@ function Footer({ onNavigate }) {
         </div>
       </div>
       <div className="footer-bottom">
-        <span>© {year} Sapiens Klick</span>
+        <span>© {year} Urukais Klick</span>
         <span>Desarrollado por <strong>{APP_LINKS.developer}</strong></span>
         <span>{APP_LINKS.alias}</span>
       </div>
@@ -161,27 +176,28 @@ function OnboardingScreen({ onContinue }) {
   const [name, setName] = useState('');
   return (
     <div className="card fade-in">
-      <div className="badge">Bienvenido</div>
-      <h1 style={{ marginBottom: '.6rem' }}>Sapiens Klick</h1>
-      <p className="subtitle">Simulador de las ficciones colectivas que nos gobiernan.</p>
+      <div className="badge">Bienvenido a la horda</div>
+      <h1 style={{ marginBottom: '.6rem' }}>Urukais Klick</h1>
+      <p className="subtitle">Simulador de decisiones en las Tierras Oscuras.</p>
       <p style={{ color: 'var(--muted)', marginBottom: '1.2rem', lineHeight: 1.6 }}>
-        Tu nombre agrupará todas tus partidas, desbloquea el leaderboard y guarda tu perfil.
-        Si prefieres el anonimato, déjalo vacío.
+        Aquí no hay dioses que te salven. Solo el filo de tu espada, la fuerza de tu
+        brazo y la mirada del capitán. Tu nombre agrupará todas tus partidas y
+        aparecerá en el leaderboard de la horda.
       </p>
       <label style={{ display: 'block', marginBottom: '.5rem', color: 'var(--muted)', fontSize: '.9rem' }}>
-        ¿Cómo te llamas?
+        ¿Cómo te llamas, orco?
       </label>
       <input
         className="input"
         value={name}
         onChange={(e) => setName(e.target.value)}
-        placeholder="tu nombre o apodo"
+        placeholder="tu nombre o apodo de guerra"
         maxLength={64}
         onKeyDown={(e) => e.key === 'Enter' && onContinue(name.trim())}
       />
       <div className="actions">
         <button className="btn" onClick={() => onContinue(name.trim())}>
-          {name.trim() ? 'Empezar' : 'Continuar anónimo'}
+          {name.trim() ? 'Entrar en la horda' : 'Continuar anónimo'}
         </button>
       </div>
     </div>
@@ -192,17 +208,19 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
   return (
     <div className="fade-in">
       <section className="hero">
-        <div className="badge">Sapiens Klick</div>
-        <h1 className="hero-title">Las ficciones que nos gobiernan</h1>
+        <Embers />
+        <div className="badge">Urukais Klick</div>
+        <h1 className="hero-title">La horda que te define</h1>
         <p className="hero-subtitle">
-          Elige un arquetipo, toma cinco decisiones y descubre cómo tu forma de
-          decidir se conecta con las narrativas que sostienen la civilización.
+          Encarna a un orco del clan Urukais Klick. Cinco decisiones en las Tierras
+          Oscuras revelarán qué tipo de guerrero eres: leal o traidor, brutal o
+          calculador, líder o carroña.
         </p>
         {globalStats && (
           <div className="hero-stats">
             <div className="hero-stat">
               <span className="hero-stat-num">{globalStats.total_users}</span>
-              <span className="hero-stat-label">jugadores</span>
+              <span className="hero-stat-label">orcos</span>
             </div>
             <div className="hero-stat">
               <span className="hero-stat-num">{globalStats.total_decisions}</span>
@@ -219,7 +237,7 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
       {resume && (
         <div className="banner">
           <span>
-            🎮 Tienes una partida sin terminar: <strong>{resume.scenario.role}</strong> · Paso {resume.currentStep.step}/{resume.scenario.steps.length}
+            🪓 Tienes una partida sin terminar: <strong>{resume.scenario.role}</strong> · Paso {resume.currentStep.step}/{resume.scenario.steps.length}
           </span>
           <div style={{ display: 'flex', gap: '.4rem' }}>
             <button className="btn small" onClick={onResume}>Continuar</button>
@@ -228,8 +246,8 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
         </div>
       )}
 
-      <h2 style={{ marginBottom: '0.4rem' }}>Elige un arquetipo</h2>
-      <p className="subtitle">Cada rol es una "ficción colectiva" distinta.</p>
+      <h2 style={{ marginBottom: '0.4rem' }}>Elige tu arquetipo</h2>
+      <p className="subtitle">Cada rol es una senda distinta dentro de la horda.</p>
 
       <div className="roles-grid">
         {roles.map((r) => (
@@ -246,17 +264,17 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
         <div className="how-it-works">
           <div className="how-step">
             <div className="how-step-num">01</div>
-            <div className="how-step-title">Elige un rol</div>
-            <div className="how-step-desc">Ocho arquetipos, cada uno con su propia lógica de decisión.</div>
+            <div className="how-step-title">Elige un orco</div>
+            <div className="how-step-desc">Ocho arquetipos, cada uno con su propia senda en la horda.</div>
           </div>
           <div className="how-step">
             <div className="how-step-num">02</div>
             <div className="how-step-title">Decide 5 veces</div>
-            <div className="how-step-desc">Tus elecciones condicionan lo que viene después.</div>
+            <div className="how-step-desc">Cada elección forja tu reputación y condiciona lo que viene.</div>
           </div>
           <div className="how-step">
             <div className="how-step-num">03</div>
-            <div className="how-step-title">Descubre tu huella</div>
+            <div className="how-step-title">Conoce tu huella</div>
             <div className="how-step-desc">Perfil, comparativa, insight narrativo y una carta desbloqueable.</div>
           </div>
         </div>
@@ -264,7 +282,7 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
 
       {history.length > 0 && (
         <div className="banner" style={{ marginTop: '2rem' }}>
-          <span>Has jugado <strong>{history.length}</strong> {history.length === 1 ? 'partida' : 'partidas'}.</span>
+          <span>Has librado <strong>{history.length}</strong> {history.length === 1 ? 'batalla' : 'batallas'}.</span>
           <button className="btn ghost small" onClick={() => onNavigate('profile')}>Mi perfil</button>
         </div>
       )}
@@ -296,8 +314,8 @@ function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollecti
   return (
     <>
       <div className="card fade-in">
-        <div className="badge">Perfil conductual</div>
-        <h2>Tu huella</h2>
+        <div className="badge">Perfil de guerra</div>
+        <h2>Tu huella en la horda</h2>
         <div className="meta">
           <span>Rol: <strong>{profile.role}</strong></span>
           <span>Decisiones: <strong>{profile.total_decisions}</strong></span>
@@ -451,11 +469,11 @@ function LeaderboardScreen({ leaderboard, userName }) {
   return (
     <div className="fade-in">
       <div className="card">
-        <div className="badge">Ranking</div>
+        <div className="badge">Ranking de la horda</div>
         <h1 style={{ marginBottom: '.4rem' }}>Leaderboard</h1>
-        <p className="subtitle">Top 10 jugadores por decisiones totales.</p>
+        <p className="subtitle">Top 10 orcos por decisiones totales.</p>
         {leaderboard.length === 0 && (
-          <p style={{ color: 'var(--muted)' }}>Nadie ha jugado todavía con nombre. ¡Sé el primero!</p>
+          <p style={{ color: 'var(--muted)' }}>Nadie ha luchado todavía con nombre. ¡Sé el primero!</p>
         )}
         {leaderboard.map((l, i) => {
           const isMe = userName && l.name === userName;
@@ -465,7 +483,7 @@ function LeaderboardScreen({ leaderboard, userName }) {
               <span className={`leaderboard-pos ${posClass}`}>#{i + 1}</span>
               <Avatar name={l.name} size={28} />
               <span className="leaderboard-name">{l.name}{isMe ? ' (tú)' : ''}</span>
-              <span className="leaderboard-meta">{l.decisions} decisiones · {l.sessions} partidas</span>
+              <span className="leaderboard-meta">{l.decisions} decisiones · {l.sessions} batallas</span>
             </div>
           );
         })}
@@ -495,7 +513,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
     getUserByName(name)
       .then(setData)
       .catch((e) => setError(e.message.includes('404')
-        ? 'Todavía no hay sesiones con este nombre.' : e.message))
+        ? 'Todavía no hay batallas con este nombre.' : e.message))
       .finally(() => setLoading(false));
     getLeague(name).then(setLeague).catch(() => {});
     getBio(name).then((d) => setBio(d.bio || '')).catch(() => {});
@@ -552,7 +570,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
                   className="bio-textarea"
                   value={bioDraft}
                   onChange={(e) => setBioDraft(e.target.value.slice(0, 280))}
-                  placeholder="Escribe una bio breve (máx. 280 caracteres)…"
+                  placeholder="Escribe tu historia de guerra (máx. 280 caracteres)…"
                   maxLength={280}
                 />
                 <div className="bio-counter">{bioDraft.length} / 280</div>
@@ -575,7 +593,7 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
               </div>
             ) : (
               <div className={`bio-box ${bio ? '' : 'empty'}`} style={{ marginTop: '1rem' }}>
-                {bio || 'Sin bio todavía. Pulsa "Editar" para añadir una.'}
+                {bio || 'Sin historia todavía. Pulsa "Editar" para escribir la tuya.'}
                 <button className="bio-edit-btn" onClick={startEditBio}>Editar</button>
               </div>
             )}
@@ -588,11 +606,11 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
         {data && (
           <>
             <div className="meta" style={{ marginTop: '1rem' }}>
-              <span><strong>{data.sessions_count}</strong> partidas</span>
+              <span><strong>{data.sessions_count}</strong> batallas</span>
               <span><strong>{data.decisions_count}</strong> decisiones</span>
               <span><strong>{data.cards_unlocked.length}</strong> cartas</span>
             </div>
-            <h3 style={{ marginTop: '1.5rem' }}>Tus partidas</h3>
+            <h3 style={{ marginTop: '1.5rem' }}>Tus batallas</h3>
             {data.sessions.length === 0 && <p style={{ color: 'var(--muted)' }}>Ninguna todavía.</p>}
             {data.sessions.map((s, i) => (
               <div key={s.user_id} className="history-item">
@@ -610,12 +628,12 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
       </div>
 
       <div className="card">
-        <h3>📊 Comparativa entre roles</h3>
-        <p className="subtitle">Cómo decide cada arquetipo a nivel global.</p>
+        <h3>📊 Comparativa entre arquetipos</h3>
+        <p className="subtitle">Cómo decide cada rol de la horda a nivel global.</p>
         {roleStats.map((r) => (
           <div key={r.role} className="stat-row">
             <span>{r.role}</span>
-            <span><strong>{r.sessions}</strong> partidas · <strong>{r.decisions}</strong> decisiones</span>
+            <span><strong>{r.sessions}</strong> batallas · <strong>{r.decisions}</strong> decisiones</span>
           </div>
         ))}
       </div>
@@ -628,28 +646,27 @@ function AboutScreen() {
     <div className="fade-in">
       <div className="card">
         <div className="badge">Acerca</div>
-        <h1>¿Qué es Sapiens Klick?</h1>
+        <h1>¿Qué es Urukais Klick?</h1>
         <p className="about-text">
-          Un simulador interactivo inspirado en <em>Sapiens: De animales a dioses</em>, el libro
-          de Yuval Noah Harari. La tesis central del libro es que los humanos dominamos el
-          planeta porque podemos creer —y hacer creer a otros— en ficciones colectivas:
-          dioses, naciones, dinero, empresas.
+          Un simulador de decisiones ambientado en las Tierras Oscuras de Mordor, inspirado
+          en el universo de <em>El Señor de los Anillos</em> de J.R.R. Tolkien. Encarnas a un
+          orco del clan <strong>Urukais Klick</strong> y debes sobrevivir en un mundo donde
+          no hay dioses, no hay moral y no hay segundas oportunidades.
         </p>
         <p className="about-text">
-          Sapiens Klick convierte esa tesis en experiencia: eliges un arquetipo y te enfrentas
-          a cinco dilemas. Al final obtienes:
+          Cada partida son cinco decisiones. Cada decisión te define. Al final obtienes:
         </p>
         <ul className="about-list">
-          <li>Un <strong>perfil conductual</strong> con tu categoría dominante.</li>
-          <li>Una <strong>comparativa</strong> con otros jugadores del mismo rol.</li>
-          <li>Un <strong>insight narrativo</strong> conectado con un tema de Sapiens.</li>
+          <li>Un <strong>perfil de guerra</strong> con tu categoría dominante.</li>
+          <li>Una <strong>comparativa</strong> con otros orcos de tu mismo arquetipo.</li>
+          <li>Un <strong>insight narrativo</strong> conectado con tu senda en la horda.</li>
           <li>Una <strong>carta de conocimiento</strong> desbloqueable (35 en total).</li>
         </ul>
 
         <div className="quote-box">
-          "Los sapiens pueden cooperar de manera muy flexible con un número ilimitado de
-          extraños gracias a las historias que inventan y creen."
-          <span className="quote-author">— Yuval Noah Harari, <em>Sapiens</em></span>
+          "Los orcos no temen a la muerte. Temen morir sin gloria, sin nombre y sin
+          que nadie recuerde su hazaña junto al fuego."
+          <span className="quote-author">— Dicho del clan Urukais Klick</span>
         </div>
       </div>
 
@@ -704,6 +721,7 @@ export default function App() {
   const [theme, setTheme] = useState(() =>
     localStorage.getItem(LS_THEME) || 'dark'
   );
+  const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
 
   useEffect(() => {
     const n = localStorage.getItem(LS_NAME) || '';
@@ -726,6 +744,13 @@ export default function App() {
     localStorage.setItem(LS_THEME, theme);
   }, [theme]);
 
+  function toggleSound() {
+    const next = !soundOn;
+    setSoundOn(next);
+    setSoundEnabled(next);
+    if (next) playClick();
+  }
+
   function handleOnboarding(name) {
     localStorage.setItem(LS_ONBOARDED, '1');
     if (name) localStorage.setItem(LS_NAME, name);
@@ -744,6 +769,7 @@ export default function App() {
   }
 
   async function startRole(r) {
+    playClick();
     const s = await createSession(r.key, userName || undefined);
     const sc = await getScenario(r.key);
     setScenario(sc);
@@ -762,6 +788,15 @@ export default function App() {
   async function choose(option) {
     if (submitting) return;
     setSubmitting(true);
+
+    if (AGGRESSIVE_CATS.includes(option.category)) {
+      playSlash();
+      document.body.classList.add('shake');
+      setTimeout(() => document.body.classList.remove('shake'), 500);
+    } else {
+      playClick();
+    }
+
     try {
       const result = await postDecision({
         user_id: userId,
@@ -787,7 +822,15 @@ export default function App() {
           const cards = await getAllCards();
           const found = cards.find((c) => c.key === p.card_unlocked) || null;
           setUnlockedCard(found);
-          if (found) fireConfetti();
+          if (found) {
+            if (AGGRESSIVE_CATS.includes(p.dominant)) {
+              fireBlood();
+              playBlood();
+            } else {
+              fireConfetti();
+              playVictory();
+            }
+          }
         }
         const current = loadHistory();
         if (!current.find((h) => h.user_id === userId)) {
@@ -835,7 +878,7 @@ export default function App() {
 
   function shareResult() {
     if (!profile) return;
-    const text = `He jugado Sapiens Klick como ${profile.role}. Mi categoría dominante: ${profile.dominant}. ¿Y tú cómo decides? ${APP_LINKS.netlify}`;
+    const text = `He luchado en Urukais Klick como ${profile.role}. Mi categoría dominante: ${profile.dominant}. ¿Y tú cómo decides? ${APP_LINKS.netlify}`;
     navigator.clipboard.writeText(text)
       .then(() => { setToast('Resultado copiado'); setTimeout(() => setToast(''), 2200); })
       .catch(() => { setToast('No se pudo copiar'); setTimeout(() => setToast(''), 2200); });
@@ -894,9 +937,16 @@ export default function App() {
         <nav className="nav">
           <div className="nav-brand">
             <div className="brand-mark" />
-            <div className="brand-name">Sapiens Klick</div>
+            <div className="brand-name">Urukais Klick</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            <button
+              className="sound-toggle"
+              onClick={toggleSound}
+              title={soundOn ? 'Silenciar efectos' : 'Activar efectos'}
+            >
+              {soundOn ? '🔊' : '🔇'}
+            </button>
             <button
               className="theme-toggle"
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -924,6 +974,8 @@ export default function App() {
         userName={userName}
         theme={theme}
         onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+        soundOn={soundOn}
+        onToggleSound={toggleSound}
       />
       <main className="app-main">
         <div className="screen" key={phase}>
