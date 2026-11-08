@@ -10,6 +10,7 @@ import AchievementsScreen from './screens/Achievements';
 import NotFound from './screens/NotFound';
 import { SkeletonCard } from './components/Skeleton';
 import { fireConfetti } from './utils/confetti';
+import Avatar from './components/Avatar';
 
 const LS_NAME = 'sapiens_klick_name';
 const LS_ONBOARDED = 'sapiens_klick_onboarded';
@@ -17,6 +18,7 @@ const LS_LAST_USER = 'sapiens_klick_last_user';
 const LS_HISTORY = 'sapiens_klick_history';
 const LS_IN_PROGRESS = 'sapiens_klick_in_progress';
 const LS_ACHIEVED = 'sapiens_klick_achieved';
+const LS_THEME = 'sapiens_klick_theme';
 
 const APP_LINKS = {
   netlify: 'https://silly-boba-dc057e.netlify.app/',
@@ -58,7 +60,7 @@ const clearInProgress = () => {
 
 /* ============ Layout ============ */
 
-function Navigation({ current, onNavigate, userName }) {
+function Navigation({ current, onNavigate, userName, theme, onToggleTheme }) {
   return (
     <nav className="nav">
       <div className="nav-brand" onClick={() => onNavigate('home')}>
@@ -76,11 +78,25 @@ function Navigation({ current, onNavigate, userName }) {
           </button>
         ))}
       </div>
-      {userName && (
-        <span className="user-chip" onClick={() => onNavigate('profile')}>
-          👤 {userName}
-        </span>
-      )}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+        <button
+          className="theme-toggle"
+          onClick={onToggleTheme}
+          title={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+        >
+          {theme === 'dark' ? '☀️' : '🌙'}
+        </button>
+        {userName && (
+          <span
+            className="user-chip"
+            onClick={() => onNavigate('profile')}
+            style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }}
+          >
+            <Avatar name={userName} size={24} />
+            {userName}
+          </span>
+        )}
+      </div>
     </nav>
   );
 }
@@ -367,6 +383,7 @@ function LeaderboardScreen({ leaderboard, userName }) {
           return (
             <div key={l.name} className="leaderboard-row" style={isMe ? { background: 'rgba(212,169,90,.08)' } : {}}>
               <span className={`leaderboard-pos ${posClass}`}>#{i + 1}</span>
+              <Avatar name={l.name} size={28} />
               <span className="leaderboard-name">{l.name}{isMe ? ' (tú)' : ''}</span>
               <span className="leaderboard-meta">{l.decisions} decisiones · {l.sessions} partidas</span>
             </div>
@@ -406,14 +423,17 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <div className="badge">Perfil</div>
-            <h1 style={{ marginBottom: '.2rem' }}>
-              {name || 'Anónimo'}
-              {league && (
-                <span className="league-badge" style={{ color: league.current.color }}>
-                  {league.current.emoji} {league.current.name}
-                </span>
-              )}
-            </h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginTop: '.6rem', marginBottom: '.4rem' }}>
+              <Avatar name={name} size={56} ring />
+              <h1 style={{ marginBottom: '.2rem' }}>
+                {name || 'Anónimo'}
+                {league && (
+                  <span className="league-badge" style={{ color: league.current.color }}>
+                    {league.current.emoji} {league.current.name}
+                  </span>
+                )}
+              </h1>
+            </div>
             {myPosition > 0 && (
               <p className="subtitle" style={{ marginBottom: 0 }}>🏆 Posición #{myPosition} en el leaderboard</p>
             )}
@@ -540,6 +560,9 @@ export default function App() {
   const [history, setHistory] = useState([]);
   const [resume, setResume] = useState(null);
   const [toast, setToast] = useState('');
+  const [theme, setTheme] = useState(() =>
+    localStorage.getItem(LS_THEME) || 'dark'
+  );
 
   useEffect(() => {
     const n = localStorage.getItem(LS_NAME) || '';
@@ -556,6 +579,11 @@ export default function App() {
     getRoleStats().then(setRoleStats).catch(() => {});
     getLeaderboard().then(setLeaderboard).catch(() => {});
   }, []);
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+    localStorage.setItem(LS_THEME, theme);
+  }, [theme]);
 
   function handleOnboarding(name) {
     localStorage.setItem(LS_ONBOARDED, '1');
@@ -727,6 +755,15 @@ export default function App() {
             <div className="brand-mark" />
             <div className="brand-name">Sapiens Klick</div>
           </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            <button
+              className="theme-toggle"
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              title={theme === 'dark' ? 'Cambiar a tema claro' : 'Cambiar a tema oscuro'}
+            >
+              {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
+          </div>
         </nav>
         <main className="app-main">
           <OnboardingScreen onContinue={handleOnboarding} />
@@ -740,7 +777,13 @@ export default function App() {
 
   return (
     <div className="app">
-      <Navigation current={navCurrent} onNavigate={navigateTo} userName={userName} />
+      <Navigation
+        current={navCurrent}
+        onNavigate={navigateTo}
+        userName={userName}
+        theme={theme}
+        onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+      />
       <main className="app-main">
         <div className="screen" key={phase}>
         {phase === 'home' && (
