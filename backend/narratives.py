@@ -81,7 +81,10 @@ ROLE_TWISTS = {
     "capitan": "Como capitán de la horda, tus elecciones dibujan el tipo de líder que serías: el que inspira o el que solo inspira miedo.",
     "esclavista": "Como esclavista del clan, tus decisiones revelan qué tipo de orco eres cuando tienes poder sobre la carne débil.",
     "asesino": "Como asesino del clan, tus elecciones muestran qué queda de ti cuando el filo ya no distingue entre enemigos y aliados.",
+    "nigromante": "Como nigromante, tus elecciones revelan cuánto estás dispuesto a sacrificar para doblegar a la muerte.",
+    
 }
+
 
 ROLE_HOOKS = {
     "guerrero": "Los guerreros del clan susurrarían tu nombre con respeto.",
@@ -92,6 +95,8 @@ ROLE_HOOKS = {
     "capitan": "La horda entera temblaría cuando entraras en la sala del trono.",
     "esclavista": "Los prisioneros te temerían más que a la muerte.",
     "asesino": "Ningún enemigo del clan dormiría tranquilo mientras vivieras.",
+        "berserker": "Los enemigos del clan susurrarían tu nombre como se susurra una tormenta.",
+    "nigromante": "Los muertos te reconocerían como señor y los vivos te temerían como a la peste.",
 }
 
 

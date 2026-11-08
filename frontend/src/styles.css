@@ -1062,3 +1062,60 @@ code {
 .shake {
   animation: urukaiShake 0.45s ease;
 }
+
+/* ---------- Cartas legendarias ---------- */
+.kcard.legendary {
+  border: 2px solid #d4a95a;
+  background: linear-gradient(135deg, #2a1a08 0%, #1a1204 100%);
+  box-shadow: 0 0 20px rgba(212, 169, 90, 0.3), inset 0 0 30px rgba(212, 169, 90, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+.kcard.legendary::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 30%, rgba(212, 169, 90, 0.15) 50%, transparent 70%);
+  animation: legendaryShine 3s linear infinite;
+  pointer-events: none;
+}
+@keyframes legendaryShine {
+  0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+  100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+.kcard.legendary .kcard-title {
+  color: #d4a95a;
+  text-shadow: 0 0 8px rgba(212, 169, 90, 0.5);
+}
+.kcard.legendary .kcard-emoji {
+  filter: drop-shadow(0 0 6px rgba(212, 169, 90, 0.7));
+}
+.kcard.legendary .kcard-body {
+  color: #c9b89a;
+}
+.legendary-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #d4a95a, #f1d79c);
+  color: #1a1204;
+  font-size: 0.7rem;
+  font-weight: 800;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.4rem;
+  box-shadow: 0 0 10px rgba(212, 169, 90, 0.6);
+}
+
+/* Card unlock legendaria (pantalla de resultado) */
+.card-unlock.legendary {
+  border: 2px solid #d4a95a;
+  box-shadow: 0 0 40px rgba(212, 169, 90, 0.4), inset 0 0 40px rgba(212, 169, 90, 0.08);
+}
+.card-unlock.legendary .legendary-badge {
+  display: inline-block;
+  margin-bottom: 0.8rem;
+}

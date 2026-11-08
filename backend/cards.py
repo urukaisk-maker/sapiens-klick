@@ -69,4 +69,46 @@ CARDS = {
         "body": "Cada guerrero ambicioso mira el trono del capitán con hambre. La ambición no es un defecto: es el motor que ha hecho caer a más capitanes que cualquier ejército élfico."},
     "legado": {"emoji": "🕯️", "title": "El nombre que sobrevive",
         "body": "Ningún orco vive para siempre. Pero los nombres de los grandes capitanes se susurran durante siglos. El legado es lo único que un orco puede arrebatarle a la muerte."},
+
+   
+    # --- Cartas legendarias (se desbloquean por hitos) ---
+    "legendary_trono": {"emoji": "🏴", "title": "El trono de cráneos", "legendary": True,
+        "body": "Has derramado tanta sangre que el suelo recuerda tu nombre. Los capitanes del futuro hablarán de ti como se habla de los dioses oscuros: con miedo y reverencia."},
+    "legendary_pacto": {"emoji": "🩸", "title": "El pacto de sangre", "legendary": True,
+        "body": "Has cruzado la línea que separa a los vivos de los muertos. La Oscuridad te reconoce como uno de los suyos. Ya nada volverá a ser igual."},
+    "legendary_abismo": {"emoji": "🕳️", "title": "La voz del abismo", "legendary": True,
+        "body": "Has escuchado lo que hay al otro lado del mundo. No todos los que miran al abismo vuelven siendo los mismos. Tú has vuelto, pero algo se quedó allí."},
+    "legendary_señor": {"emoji": "👁️", "title": "El señor de la guerra", "legendary": True,
+        "body": "Has luchado como tantos orcos que ya no recuerdas cuál fue tu primer nombre. Pero el clan sí lo recuerda. Y eso, en Mordor, es la única inmortalidad real."},
+    "legendary_heredero": {"emoji": "💀", "title": "El heredero de Morgoth", "legendary": True,
+        "body": "Has recorrido todas las sendas de la horda. Ningún orco ha llegado tan lejos. Los antiguos espíritus te susurran un nombre que nadie se atreve a pronunciar."},
+}
+
+
+# Reglas para desbloquear cartas legendarias
+# Se evalúan después de cada partida
+LEGENDARY_RULES = {
+    "legendary_trono": {
+        "check": lambda stats: stats.get("aggressive_total", 0) >= 5,
+        "desc": "5 decisiones agresivas en total",
+    },
+    "legendary_pacto": {
+        "check": lambda stats: (
+            stats.get("chaman_played", 0) + stats.get("nigromante_played", 0) >= 1
+            and stats.get("ambicion_total", 0) >= 2
+        ),
+        "desc": "Jugar chamán o nigromante con 2+ decisiones de ambición",
+    },
+    "legendary_abismo": {
+        "check": lambda stats: stats.get("distinct_roles", 0) >= 5,
+        "desc": "Jugar 5 arquetipos distintos",
+    },
+    "legendary_señor": {
+        "check": lambda stats: stats.get("distinct_roles", 0) >= 7,
+        "desc": "Jugar 7 arquetipos distintos",
+    },
+    "legendary_heredero": {
+        "check": lambda stats: stats.get("distinct_roles", 0) >= 10,
+        "desc": "Jugar los 10 arquetipos",
+    },
 }

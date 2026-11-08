@@ -49,4 +49,18 @@ VARIANTS = {
             "rebelde": "Exigiste una explicación al capitán y te mira con recelo. Ahora tu objetivo es un niño élfico que podría ser el próximo líder enemigo.",
         }
     },
+
+
+    "berserker": {
+        2: {
+            "disciplinado": "Contuviste la rabia y obedeciste. Ahora un enemigo herido te suplica que lo mates rápido.",
+            "agresivo": "Cargaste solo contra el enemigo. Ahora un enemigo herido te suplica que lo mates rápido.",
+        }
+    },
+    "nigromante": {
+        2: {
+            "ambicion": "Resucitaste a tu guerrero. Ahora un espíritu antiguo te ofrece conocimiento a cambio de un recuerdo.",
+            "tradicional": "Dejaste morir a tu guerrero. Ahora un espíritu antiguo te ofrece conocimiento a cambio de un recuerdo.",
+        }
+    },
 }

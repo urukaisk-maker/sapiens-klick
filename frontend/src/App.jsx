@@ -4,6 +4,7 @@ import {
   getScenario, postDecision, getProfile, getComparison, getUserByName,
   getAllCards, getCardsBatch, getAchievements, getLeague,
   getBio, saveBio, getFavorites, addFavorite, removeFavorite, exportMyData,
+  checkLegendary,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
@@ -266,7 +267,7 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
           <div className="how-step">
             <div className="how-step-num">01</div>
             <div className="how-step-title">Elige un orco</div>
-            <div className="how-step-desc">Ocho arquetipos, cada uno con su propia senda en la horda.</div>
+            <div className="how-step-desc">Diez arquetipos, cada uno con su propia senda en la horda.</div>
           </div>
           <div className="how-step">
             <div className="how-step-num">02</div>
@@ -312,6 +313,7 @@ function ScenarioScreen({ scenario, step, submitting, onChoose }) {
 }
 
 function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollection, onShare }) {
+  const isLegendaryCard = unlockedCard && unlockedCard.key && unlockedCard.key.startsWith('legendary_');
   return (
     <>
       <div className="card fade-in">
@@ -345,7 +347,8 @@ function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollecti
       )}
 
       {unlockedCard && (
-        <div className="card card-unlock">
+        <div className={`card card-unlock ${isLegendaryCard ? 'legendary' : ''}`}>
+          {isLegendaryCard && <span className="legendary-badge">✦ Legendaria</span>}
           <div className="badge">✦ Carta desbloqueada</div>
           <h3>{unlockedCard.emoji} {unlockedCard.title}</h3>
           <p style={{ color: 'var(--muted)', lineHeight: 1.65 }}>{unlockedCard.body}</p>
@@ -442,8 +445,12 @@ function CollectionScreen({ allCards, unlockedCards, userName }) {
         {filtered.map((c) => {
           const unlocked = unlockedCards.includes(c.key);
           const isFav = favorites.includes(c.key);
+          const isLegendary = c.key.startsWith('legendary_');
           return (
-            <div key={c.key} className={`kcard ${unlocked ? '' : 'locked'}`}>
+            <div
+              key={c.key}
+              className={`kcard ${unlocked ? '' : 'locked'} ${isLegendary ? 'legendary' : ''}`}
+            >
               {unlocked && userName && (
                 <button
                   className={`fav-btn ${isFav ? 'active' : ''}`}
@@ -452,6 +459,9 @@ function CollectionScreen({ allCards, unlockedCards, userName }) {
                 >
                   {isFav ? '⭐' : '☆'}
                 </button>
+              )}
+              {isLegendary && unlocked && (
+                <span className="legendary-badge">✦ Legendaria</span>
               )}
               <div className="kcard-emoji">{c.emoji}</div>
               <div className="kcard-title">{c.title}</div>
@@ -690,7 +700,7 @@ function AboutScreen() {
           <li>Un <strong>perfil de guerra</strong> con tu categoría dominante.</li>
           <li>Una <strong>comparativa</strong> con otros orcos de tu mismo arquetipo.</li>
           <li>Un <strong>insight narrativo</strong> conectado con tu senda en la horda.</li>
-          <li>Una <strong>carta de conocimiento</strong> desbloqueable (35 en total).</li>
+          <li>Una <strong>carta de conocimiento</strong> desbloqueable (40 en total, 5 legendarias).</li>
         </ul>
 
         <div className="quote-box">
@@ -884,6 +894,10 @@ export default function App() {
               setTimeout(() => setToast(''), 3500);
             }
           } catch {}
+        }
+
+        if (userName) {
+          try { await checkLegendary(userName); } catch {}
         }
 
         clearInProgress();

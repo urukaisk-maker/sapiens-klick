@@ -10,7 +10,7 @@ from sqlalchemy.orm import Session
 from database import engine, get_db, Base
 from models import User, Decision, CardUnlock, UserProfile, Favorite
 from scenarios import SCENARIOS
-from cards import CARDS
+from cards import CARDS, LEGENDARY_RULES
 from narratives import build_insight
 from variants import VARIANTS
 from achievements import compute_achievements
@@ -18,7 +18,7 @@ from leagues import compute_league
 from stats import stats_router
 
 
-app = FastAPI(title="Sapiens Klick API")
+app = FastAPI(title="Urukais Klick API")
 app.include_router(stats_router)
 
 
@@ -27,6 +27,49 @@ def on_startup():
     Base.metadata.create_all(bind=engine)
     with engine.begin() as conn:
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS name VARCHAR(64)"))
+
+
+# ---------- Helper: cartas legendarias ----------
+def _check_legendary_cards(name: str, db: Session):
+    """Evalúa las reglas de cartas legendarias y desbloquea las que apliquen."""
+    users = db.query(User).filter(User.name == name).all()
+    if not users:
+        return
+    user_ids = [u.id for u in users]
+
+    all_decisions = (db.query(Decision.category, Decision.choice, User.role)
+                     .join(User, User.id == Decision.user_id)
+                     .filter(Decision.user_id.in_(user_ids)).all())
+
+    cats = [d[0] for d in all_decisions]
+    choices_by_role = {}
+    for cat, choice, role in all_decisions:
+        choices_by_role.setdefault(role, set()).add(choice)
+
+    aggressive_total = sum(1 for c in cats if c in ("agresivo", "traicion", "ambicion"))
+    ambicion_total = sum(1 for c in cats if c == "ambicion")
+
+    stats = {
+        "aggressive_total": aggressive_total,
+        "ambicion_total": ambicion_total,
+        "distinct_roles": len({u.role for u in users}),
+        "chaman_played": 1 if "chaman" in choices_by_role else 0,
+        "nigromante_played": 1 if "nigromante" in choices_by_role else 0,
+    }
+
+    unlocked = set()
+    for c in db.query(CardUnlock).filter(CardUnlock.user_id.in_(user_ids)).all():
+        unlocked.add(c.card_key)
+
+    for key, rule in LEGENDARY_RULES.items():
+        if key in unlocked:
+            continue
+        try:
+            if rule["check"](stats):
+                db.add(CardUnlock(user_id=users[0].id, card_key=key))
+        except Exception:
+            continue
+    db.commit()
 
 
 # ---------- Schemas ----------
@@ -67,12 +110,12 @@ class BioUpdate(BaseModel):
 # ---------- Base ----------
 @app.get("/")
 def read_root():
-    return {"status": "ok", "message": "Bienvenido a Sapiens Klick"}
+    return {"status": "ok", "message": "Bienvenido a Urukais Klick"}
 
 
 @app.get("/api/health")
 def health():
-    return {"status": "healthy", "service": "sapiens-klick-backend"}
+    return {"status": "healthy", "service": "urukais-klick-backend"}
 
 
 @app.get("/api/roles")
@@ -156,6 +199,10 @@ def post_decision(payload: DecisionRequest, db: Session = Depends(get_db)):
     db.add(decision)
     db.commit()
     db.refresh(decision)
+
+    # Comprobar cartas legendarias tras la decisión
+    if user.name:
+        _check_legendary_cards(user.name, db)
 
     scenario = SCENARIOS.get(user.role)
     if not scenario:
@@ -258,8 +305,11 @@ def compare(user_id: int, db: Session = Depends(get_db)):
 # ---------- Cartas ----------
 @app.get("/api/cards")
 def list_cards():
-    return [{"key": k, "emoji": v["emoji"], "title": v["title"], "body": v["body"]}
-            for k, v in CARDS.items()]
+    return [
+        {"key": k, "emoji": v["emoji"], "title": v["title"], "body": v["body"],
+         "legendary": v.get("legendary", False)}
+        for k, v in CARDS.items()
+    ]
 
 
 @app.get("/api/cards/{user_id}")
@@ -278,6 +328,19 @@ def cards_batch(payload: CardsBatchRequest, db: Session = Depends(get_db)):
         for c in db.query(CardUnlock).filter(CardUnlock.user_id == uid):
             unlocked.add(c.card_key)
     return {"unlocked": list(unlocked), "total": len(CARDS)}
+
+
+@app.post("/api/cards/check-legendary/{name}")
+def check_legendary(name: str, db: Session = Depends(get_db)):
+    _check_legendary_cards(name, db)
+    users = db.query(User).filter(User.name == name).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="Nombre no encontrado")
+    user_ids = [u.id for u in users]
+    unlocked = [c.card_key for c in db.query(CardUnlock)
+                .filter(CardUnlock.user_id.in_(user_ids))
+                .filter(CardUnlock.card_key.like("legendary_%")).all()]
+    return {"unlocked": unlocked, "total": len(LEGENDARY_RULES)}
 
 
 @app.post("/api/history")

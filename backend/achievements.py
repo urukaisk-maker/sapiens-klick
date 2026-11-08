@@ -29,6 +29,14 @@ ACHIEVEMENTS = [
      "desc": "Juega 3 días seguidos", "target": 3, "metric": "streak"},
     {"key": "racha_7", "title": "Siete lunas de sangre", "emoji": "🌟",
      "desc": "Juega 7 días seguidos", "target": 7, "metric": "streak"},
+         {"key": "berserker_furia", "title": "Furia desatada", "emoji": "🐗",
+     "desc": "Completa una partida como berserker", "target": 1, "metric": "berserker_played"},
+    {"key": "nigromante_pacto", "title": "Pacto con la muerte", "emoji": "💀",
+     "desc": "Completa una partida como nigromante", "target": 1, "metric": "nigromante_played"},
+    {"key": "legendarias", "title": "Coleccionista legendario", "emoji": "🏆",
+     "desc": "Desbloquea las 5 cartas legendarias", "target": 5, "metric": "legendary_cards"},
+    {"key": "todos_arquetipos", "title": "Señor de las diez sendas", "emoji": "🎭",
+     "desc": "Juega los 10 arquetipos", "target": 10, "metric": "distinct_roles"},
 ]
 
 
@@ -55,6 +63,10 @@ SECRET_ACHIEVEMENTS = [
     {"key": "todos_roles", "title": "Cronista de las ocho sendas", "emoji": "📖",
      "desc": "Completa al menos una partida con cada uno de los 8 arquetipos",
      "target": 8, "metric": "distinct_roles_all"},
+         {"key": "berserker_capitan", "title": "El que mató al capitán", "emoji": "🗡️",
+     "desc": "Mata al capitán como berserker", "target": 1, "metric": "berserker_matar_capitan"},
+    {"key": "nigromante_nombre", "title": "El nombre entregado", "emoji": "🌀",
+     "desc": "Entrega tu nombre a la Oscuridad como nigromante", "target": 1, "metric": "nigromante_entregar_nombre"},
 ]
 
 

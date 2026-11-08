@@ -87,3 +87,10 @@ export const removeFavorite = (name, cardKey) =>
 // ---------- RGPD ----------
 export const exportMyData = (name) =>
   fetch(`${API_BASE}/export/my-data/${encodeURIComponent(name)}`).then(jsonOrThrow);
+
+
+// ---------- Cartas legendarias ----------
+export const checkLegendary = (name) =>
+  fetch(`${API_BASE}/cards/check-legendary/${encodeURIComponent(name)}`, {
+    method: 'POST',
+  }).then(jsonOrThrow);

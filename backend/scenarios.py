@@ -263,4 +263,72 @@ SCENARIOS = {
                  {"label": "Quedarte, tu lugar es la horda", "value": "quedarte", "category": "leal"}]},
         ],
     },
+
+
+    "berserker": {
+        "role": "Berserker",
+        "emoji": "🐗",
+        "tagline": "Furia sin control",
+        "intro": (
+            "No piensas. No dudas. No temes. Cuando la sangre se calienta, tu mente "
+            "se apaga y tu cuerpo se convierte en un solo instinto: matar. Los capitanes "
+            "te temen tanto como te usan. Pero la furia también consume al que la lleva."
+        ),
+        "steps": [
+            {"step": 1, "question": "En plena batalla, el capitán ordena retroceder. Tú quieres seguir matando.",
+             "options": [
+                 {"label": "Obedecer y retroceder (con rabia contenida)", "value": "obedecer", "category": "disciplinado"},
+                 {"label": "Ignorar la orden y cargar solo", "value": "cargar", "category": "agresivo"}]},
+            {"step": 2, "question": "Un enemigo herido te suplica que lo mates rápido.",
+             "options": [
+                 {"label": "Matarlo de un golpe limpio", "value": "matar_limpio", "category": "pragmatico"},
+                 {"label": "Torturarlo despacio, la furia exige sangre", "value": "torturar", "category": "agresivo"}]},
+            {"step": 3, "question": "Tu furia te ha hecho herir a un compañero del clan por error.",
+             "options": [
+                 {"label": "Pedir perdón al clan y aceptar el castigo", "value": "pedir_perdon", "category": "leal"},
+                 {"label": "Culpar al herido por ponerse en medio", "value": "culpar", "category": "individualista"}]},
+            {"step": 4, "question": "El chamán te ofrece un brebaje para controlar la furia.",
+             "options": [
+                 {"label": "Bebérlo y perder parte de tu fuerza", "value": "beber", "category": "reflexivo"},
+                 {"label": "Rechazarlo, tu furia es tu poder", "value": "rechazar_brebaje", "category": "libre"}]},
+            {"step": 5, "question": "En el fragor del combate ves al capitán acorralado.",
+             "options": [
+                 {"label": "Salvarlo aunque te cueste la vida", "value": "salvar_capitan", "category": "altruista"},
+                 {"label": "Aprovechar para matarlo tú y ocupar su puesto", "value": "matar_capitan", "category": "ambicion"}]},
+        ],
+    },
+
+    "nigromante": {
+        "role": "Nigromante",
+        "emoji": "💀",
+        "tagline": "Pactos con la muerte",
+        "intro": (
+            "Mientras otros orcos empuñan espadas, tú empuñas nombres. Los muertos "
+            "te obedecen. Pero cada vez que devuelves a alguien de la Oscuridad, algo "
+            "en ti se apaga. La nigromancia no perdona: siempre cobra."
+        ),
+        "steps": [
+            {"step": 1, "question": "Uno de tus guerreros favoritos muere en batalla.",
+             "options": [
+                 {"label": "Resucitarlo con magia prohibida", "value": "resucitar", "category": "ambicion"},
+                 {"label": "Dejarlo morir, la muerte es sagrada", "value": "dejar_morir", "category": "tradicional"}]},
+            {"step": 2, "question": "Un espíritu antiguo te ofrece conocimiento a cambio de un recuerdo.",
+             "options": [
+                 {"label": "Aceptar el trato, el conocimiento vale más", "value": "aceptar_espiritu", "category": "curioso"},
+                 {"label": "Rechazarlo, tus recuerdos son tuyos", "value": "rechazar_espiritu", "category": "estoico"}]},
+            {"step": 3, "question": "El capitán descubre tus prácticas y te amenaza con ejecutarte.",
+             "options": [
+                 {"label": "Ofrecerle poder a cambio de tu vida", "value": "pactar_capitan", "category": "estratega"},
+                 {"label": "Huir del clan y seguir solo", "value": "huir", "category": "libre"}]},
+            {"step": 4, "question": "Puedes levantar un ejército de muertos, pero matará a todos los vivos cercanos.",
+             "options": [
+                 {"label": "Levantarlo, la victoria lo justifica", "value": "levantar", "category": "ambicion"},
+                 {"label": "Rechazarlo, no quieres ser un carnicero de vivos", "value": "rechazar_ejercito", "category": "empatico"}]},
+            {"step": 5, "question": "Al final del ritual, la Oscuridad te pide tu propio nombre.",
+             "options": [
+                 {"label": "Entregarlo y convertirte en leyenda", "value": "entregar_nombre", "category": "poder"},
+                 {"label": "Romper el ritual y conservar tu identidad", "value": "romper", "category": "autenticidad"}]},
+        ],
+    },
 }
+
