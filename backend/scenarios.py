@@ -1,267 +1,266 @@
 SCENARIOS = {
-    "cazador": {
-        "role": "Cazador-recolector",
+    "guerrero": {
+        "role": "Guerrero orco",
+        "emoji": "🪓",
+        "tagline": "Sangre, hierro y gloria",
+        "intro": (
+            "Sirves al clan Urukais Klick en las Tierras Oscuras. Aquí no hay dioses "
+            "que te salven: solo el filo de tu espada, la fuerza de tu brazo y la "
+            "mirada del capitán. Cada invierno mueren los débiles. Cada verano, los "
+            "fuertes se reparten la carne."
+        ),
+        "steps": [
+            {"step": 1, "question": "Tras un saqueo, has conseguido más botín que nadie.",
+             "options": [
+                 {"label": "Compartir el botín con la horda", "value": "compartir", "category": "cooperativo"},
+                 {"label": "Quedártelo todo para ti", "value": "acaparar", "category": "individualista"}]},
+            {"step": 2, "question": "Un guerrero rival te desafía a muerte por tu puesto.",
+             "options": [
+                 {"label": "Aceptar el duelo y matarlo", "value": "matar", "category": "agresivo"},
+                 {"label": "Ignorarlo y esperar a que se debilite", "value": "esperar", "category": "estratega"}]},
+            {"step": 3, "question": "El capitán ordena atacar un poblado élfico al amanecer.",
+             "options": [
+                 {"label": "Obedecer sin dudar", "value": "obedecer", "category": "leal"},
+                 {"label": "Desafiar la orden, es un suicidio", "value": "desafiar", "category": "rebelde"}]},
+            {"step": 4, "question": "Capturas a un humano que podría tener información.",
+             "options": [
+                 {"label": "Torturarlo hasta que hable", "value": "torturar", "category": "agresivo"},
+                 {"label": "Interrogarlo con astucia", "value": "astucia", "category": "estratega"}]},
+            {"step": 5, "question": "La horda pasa hambre. Hay prisioneros débiles en las jaulas.",
+             "options": [
+                 {"label": "Sacrificarlos para alimentar al clan", "value": "sacrificar", "category": "pragmatico"},
+                 {"label": "Dejarlos vivir, quizá sirvan de esclavos", "value": "conservar", "category": "estratega"}]},
+        ],
+    },
+
+    "rastreador": {
+        "role": "Rastreador",
         "emoji": "🏹",
-        "tagline": "Sobrevivir en la banda",
+        "tagline": "Acechar en las sombras",
         "intro": (
-            "Vives hace 40.000 años en una banda de 30 personas. No hay dinero, "
-            "no hay Estado, no hay dioses escritos. Solo el grupo, la confianza "
-            "y la supervivencia."
+            "Tus ojos ven en la oscuridad lo que otros ni imaginan. Rastreas presas "
+            "durante días sin dormir, y vuelves con la información que decide batallas. "
+            "El clan depende de tu olfato. Pero los rastreadores que fallan no vuelven."
         ),
         "steps": [
-            {"step": 1, "question": "Has cazado un ciervo tú solo. El grupo tiene hambre.",
+            {"step": 1, "question": "Encuentras huellas de un grupo élfico cerca del campamento.",
              "options": [
-                 {"label": "Compartir la carne con todos", "value": "compartir", "category": "cooperativo"},
-                 {"label": "Guardarla para ti y tu familia", "value": "guardar", "category": "individualista"}]},
-            {"step": 2, "question": "Un miembro se rompe la pierna y no puede caminar.",
+                 {"label": "Volver a avisar al capitán", "value": "avisar", "category": "leal"},
+                 {"label": "Seguirlos solo para ganar prestigio", "value": "seguir", "category": "individualista"}]},
+            {"step": 2, "question": "Debes cruzar un río helado. Un compañero herido no puede nadar.",
              "options": [
-                 {"label": "Quedarte a cuidarlo hasta que sane", "value": "cuidar", "category": "empatico"},
-                 {"label": "Seguir con la banda, es la ley del más fuerte", "value": "abandonar", "category": "individualista"}]},
-            {"step": 3, "question": "El chamán anuncia espíritus en el bosque del norte.",
+                 {"label": "Cargarlo tú mismo al otro lado", "value": "cargar", "category": "empatico"},
+                 {"label": "Dejarlo, la misión es lo primero", "value": "dejar", "category": "pragmatico"}]},
+            {"step": 3, "question": "Encuentras un cofre antiguo con un objeto brillante.",
              "options": [
-                 {"label": "Creer al chamán y evitar el bosque", "value": "creer", "category": "tradicional"},
-                 {"label": "Explorar el bosque tú mismo", "value": "explorar", "category": "curioso"}]},
-            {"step": 4, "question": "El líder anciano ya no puede cazar. El grupo duda.",
+                 {"label": "Cogerlo, es un botín valioso", "value": "coger", "category": "impulsivo"},
+                 {"label": "Dejarlo, podría estar maldito", "value": "dejar_cofre", "category": "reflexivo"}]},
+            {"step": 4, "question": "El capitán te pregunta si viste algo sospechoso en el bosque.",
              "options": [
-                 {"label": "Mantener al anciano por respeto", "value": "anciano", "category": "leal"},
-                 {"label": "Proponer un nuevo líder más joven", "value": "nuevo", "category": "rebelde"}]},
-            {"step": 5, "question": "Las aves migran hacia el sur. El cielo se ve extraño.",
+                 {"label": "Contarle todo lo que sabes", "value": "contar", "category": "leal"},
+                 {"label": "Ocultar los detalles importantes", "value": "ocultar", "category": "estratega"}]},
+            {"step": 5, "question": "Una tormenta te sorprende lejos del campamento.",
              "options": [
-                 {"label": "Seguir la migración de las aves", "value": "migrar", "category": "intuitivo"},
-                 {"label": "Quedarse donde hay agua conocida", "value": "quedarse", "category": "seguridad"}]},
+                 {"label": "Refugiarte en una cueva desconocida", "value": "cueva", "category": "curioso"},
+                 {"label": "Volver corriendo al campamento conocido", "value": "volver", "category": "seguridad"}]},
         ],
     },
 
-    "agricultor": {
-        "role": "Súbdito agrícola",
-        "emoji": "🌾",
-        "tagline": "Vivir bajo el rey y los dioses",
+    "herrero": {
+        "role": "Herrero de guerra",
+        "emoji": "⚒️",
+        "tagline": "Forjar lo que mata",
         "intro": (
-            "Año 3.000 a.C. en Mesopotamia. Has dejado de ser nómada. Ahora "
-            "dependes de la cosecha, del templo y del rey. Por primera vez en la "
-            "historia, alguien puede mandar sobre ti sin verte."
+            "Tu yunque suena día y noche bajo la Montaña Oscura. Sin tus armas, la "
+            "horda no sería más que bestias con palos. Los guerreros te respetan porque "
+            "saben que su vida depende de tu martillo. Pero el fuego también consume."
         ),
         "steps": [
-            {"step": 1, "question": "El rey exige el 30% de tu cosecha como tributo.",
+            {"step": 1, "question": "Un guerrero te pide forjarle una espada especial, fuera de turno.",
              "options": [
-                 {"label": "Pagar el tributo completo", "value": "pagar", "category": "institucional"},
-                 {"label": "Esconder parte de la cosecha", "value": "esconder", "category": "rebelde"}]},
-            {"step": 2, "question": "Hay sequía. El templo dice que hay que rezar más.",
+                 {"label": "Forjarla y cobrarle el doble", "value": "cobrar", "category": "pragmatico"},
+                 {"label": "Rechazarlo, todos esperan su turno", "value": "rechazar", "category": "disciplinado"}]},
+            {"step": 2, "question": "Encuentras mineral enano de altísima calidad en una mina derrumbada.",
              "options": [
-                 {"label": "Rezar al dios de la lluvia", "value": "rezar", "category": "tradicional"},
-                 {"label": "Probar un nuevo sistema de riego", "value": "innovar", "category": "innovador"}]},
-            {"step": 3, "question": "Un grupo de campesinos planea una revuelta contra el rey.",
+                 {"label": "Bajar a por él arriesgando tu vida", "value": "bajar", "category": "riesgo"},
+                 {"label": "Marcar la mina y volver con refuerzos", "value": "refuerzos", "category": "estratega"}]},
+            {"step": 3, "question": "Un joven orco quiere ser tu aprendiz.",
              "options": [
-                 {"label": "Unirte a la revuelta", "value": "rebelarse", "category": "rebelde"},
-                 {"label": "Mantenerte leal al rey", "value": "leal", "category": "leal"}]},
-            {"step": 4, "question": "Un escriba te ofrece aprender a leer y escribir.",
+                 {"label": "Enseñarle todo lo que sabes", "value": "ensenar", "category": "altruista"},
+                 {"label": "Mantener tus secretos, el conocimiento es poder", "value": "secretos", "category": "status"}]},
+            {"step": 4, "question": "El capitán te pide forjar un arma para él, pero maldices el metal.",
              "options": [
-                 {"label": "Aprender, aunque el cambio asuste", "value": "aprender", "category": "innovador"},
-                 {"label": "Seguir con la tradición oral del pueblo", "value": "oral", "category": "tradicional"}]},
-            {"step": 5, "question": "Podrías intentar ascender a escriba del templo, pero es riesgoso.",
+                 {"label": "Forjarla perfecta, es el capitán", "value": "perfecta", "category": "leal"},
+                 {"label": "Sabotearla en secreto", "value": "sabotear", "category": "rebelde"}]},
+            {"step": 5, "question": "Tu horno se apaga y no hay carbón suficiente.",
              "options": [
-                 {"label": "Aceptar tu lugar en la aldea", "value": "aceptar", "category": "conformista"},
-                 {"label": "Intentar el ascenso aunque falle", "value": "ascender", "category": "competitivo"}]},
+                 {"label": "Quemar tu propia casa para seguir forjando", "value": "quemar", "category": "disciplinado"},
+                 {"label": "Esperar a que llegue el próximo cargamento", "value": "esperar_carbon", "category": "reflexivo"}]},
         ],
     },
 
-    "consumidor": {
-        "role": "Consumidor moderno",
-        "emoji": "🛍️",
-        "tagline": "Navegar el mercado y las marcas",
+    "chaman": {
+        "role": "Chamán oscuro",
+        "emoji": "🩸",
+        "tagline": "Susurrar a la Oscuridad",
         "intro": (
-            "Año 2026. Vives en una ciudad. Casi todas tus decisiones están "
-            "mediadas por dinero, marcas y algoritmos. Las 'ficciones' que te "
-            "rodean ya no son dioses, son marcas."
+            "No sirves a dioses ni a señores. Sirves a la Oscuridad misma, que habla "
+            "en sueños y exige sangre. Los orcos te temen más que al capitán. Pero "
+            "quien escucha a la Oscuridad, tarde o temprano, es devorado por ella."
         ),
         "steps": [
-            {"step": 1, "question": "Dos camisetas idénticas: una de marca (80€) y otra sin marca (15€).",
+            {"step": 1, "question": "La Oscuridad te pide el sacrificio de un guerrero leal.",
              "options": [
-                 {"label": "Comprar la de marca", "value": "marca", "category": "status"},
-                 {"label": "Comprar la barata", "value": "barata", "category": "pragmatico"}]},
-            {"step": 2, "question": "Un contrato de 5 páginas para un servicio digital.",
+                 {"label": "Sacrificarlo en secreto", "value": "sacrificar_guerrero", "category": "institucional"},
+                 {"label": "Rechazar la petición y desafiar a la Oscuridad", "value": "rechazar_oscuridad", "category": "rebelde"}]},
+            {"step": 2, "question": "Un joven orco enfermo te pide curación.",
              "options": [
-                 {"label": "Aceptar sin leer (como el 99%)", "value": "aceptar", "category": "automatico"},
-                 {"label": "Leerlo entero antes de firmar", "value": "leer", "category": "reflexivo"}]},
-            {"step": 3, "question": "Tienes 1.000€ ahorrados.",
+                 {"label": "Curarlo con rituales prohibidos", "value": "curar", "category": "empatico"},
+                 {"label": "Dejarlo morir, la debilidad no debe sobrevivir", "value": "dejar_morir", "category": "pragmatico"}]},
+            {"step": 3, "question": "En un trance, ves el futuro: la horda será aniquilada.",
              "options": [
-                 {"label": "Invertir en criptomonedas", "value": "cripto", "category": "riesgo"},
-                 {"label": "Dejarlos en una cuenta de ahorro", "value": "ahorro", "category": "seguridad"}]},
-            {"step": 4, "question": "Ves algo que quieres mucho en una oferta que acaba en 2 horas.",
+                 {"label": "Advertir al capitán aunque no te crea", "value": "advertir", "category": "leal"},
+                 {"label": "Callar y preparar tu propia huida", "value": "callar", "category": "individualista"}]},
+            {"step": 4, "question": "Encuentras un grimorio antiguo con magia olvidada.",
              "options": [
-                 {"label": "Comprarlo ya, no sea que se acabe", "value": "ya", "category": "impulsivo"},
-                 {"label": "Esperar 24h y ver si sigues queriéndolo", "value": "esperar", "category": "disciplinado"}]},
-            {"step": 5, "question": "En una discusión en redes, alguien insulta a un amigo.",
+                 {"label": "Estudiarlo a fondo, sin miedo", "value": "estudiar", "category": "curioso"},
+                 {"label": "Quemarlo, hay conocimientos que no deben existir", "value": "quemar_grimorio", "category": "reflexivo"}]},
+            {"step": 5, "question": "La Oscuridad te ofrece poder inmenso a cambio de tu alma.",
              "options": [
-                 {"label": "Responder públicamente para defenderlo", "value": "responder", "category": "status"},
-                 {"label": "Ignorar y hablarlo en privado", "value": "ignorar", "category": "estoico"}]},
+                 {"label": "Aceptar el pacto", "value": "aceptar_pacto", "category": "ambicion"},
+                 {"label": "Rechazarlo, tu alma aún es tuya", "value": "rechazar_pacto", "category": "estoico"}]},
         ],
     },
 
-    "emprendedor": {
-        "role": "Emprendedor digital",
-        "emoji": "🚀",
-        "tagline": "Construir algo desde cero",
+    "domador": {
+        "role": "Domador de wargos",
+        "emoji": "🐺",
+        "tagline": "Bestias que obedecen",
         "intro": (
-            "Año 2026. Tienes 28 años y una idea. Tienes algo de dinero ahorrado "
-            "y 18 meses de pista antes de necesitar ingresos. Cada decisión que "
-            "tomes ahora definirá si la historia termina en éxito, fracaso o algo "
-            "intermedio."
+            "Los wargos no son perros. Son muerte con colmillos. Solo tú puedes "
+            "montarlos sin que te arranquen el brazo. La horda te necesita para sus "
+            "cargas de caballería. Pero las bestias siempre recuerdan quién manda."
         ),
         "steps": [
-            {"step": 1, "question": "Un amigo quiere ser cofundador al 50%. Tú ya empezaste solo.",
+            {"step": 1, "question": "Un cachorro de wargo rechaza el alimento de tu mano.",
              "options": [
-                 {"label": "Aceptar al 50% y compartir el riesgo", "value": "socio", "category": "cooperativo"},
-                 {"label": "Seguir solo y ofrecerle solo un 10%", "value": "solo", "category": "individualista"}]},
-            {"step": 2, "question": "El producto lleva 8 meses y los usuarios no crecen.",
+                 {"label": "Forzarlo con violencia hasta que obedezca", "value": "forzar", "category": "agresivo"},
+                 {"label": "Tener paciencia hasta ganarte su confianza", "value": "paciencia", "category": "empatico"}]},
+            {"step": 2, "question": "Un wargo mata a un guerrero del clan por error.",
              "options": [
-                 {"label": "Pivotar hacia lo que los usuarios piden", "value": "pivotar", "category": "estratega"},
-                 {"label": "Insistir en la visión original", "value": "insistir", "category": "disciplinado"}]},
-            {"step": 3, "question": "Necesitas 200.000€ para escalar. Tienes 30.000€ ahorrados.",
+                 {"label": "Sacrificar al wargo ante la horda", "value": "sacrificar_wargo", "category": "institucional"},
+                 {"label": "Defenderlo, fue culpa del guerrero", "value": "defender", "category": "leal"}]},
+            {"step": 3, "question": "Encuentras una camada de wargos blancos, más grandes y feroces.",
              "options": [
-                 {"label": "Invertir tus ahorros", "value": "ahorros", "category": "riesgo"},
-                 {"label": "Buscar inversores externos (perder control)", "value": "externos", "category": "seguridad"}]},
-            {"step": 4, "question": "Puedes contratar a un senior caro o a dos juniors baratos.",
+                 {"label": "Intentar domarlos, sería un gran poder", "value": "domar_blancos", "category": "riesgo"},
+                 {"label": "Matarlos, son demasiado peligrosos", "value": "matar_blancos", "category": "seguridad"}]},
+            {"step": 4, "question": "El capitán quiere tu wargo principal para su montura personal.",
              "options": [
-                 {"label": "Senior, con experiencia", "value": "senior", "category": "estratega"},
-                 {"label": "Dos juniors, más manos", "value": "juniors", "category": "pragmatico"}]},
-            {"step": 5, "question": "Un competidor grande te ofrece comprarte por 2M€ ahora.",
+                 {"label": "Cederlo, es una orden", "value": "ceder", "category": "leal"},
+                 {"label": "Negarte, tu vínculo es más fuerte", "value": "negar", "category": "rebelde"}]},
+            {"step": 5, "question": "Tu wargo está herido de muerte tras una batalla.",
              "options": [
-                 {"label": "Vender y asegurar el dinero", "value": "vender", "category": "seguridad"},
-                 {"label": "Rechazar y seguir construyendo", "value": "seguir", "category": "impulsivo"}]},
+                 {"label": "Matarlo tú mismo, es una muerte digna", "value": "matar_misericordia", "category": "estoico"},
+                 {"label": "Intentar salvarlo con rituales oscuros", "value": "salvar", "category": "altruista"}]},
         ],
     },
 
-    "soldado": {
-        "role": "Soldado",
-        "emoji": "⚔️",
-        "tagline": "Obediencia, lealtad y duda",
+    "capitan": {
+        "role": "Capitán de la horda",
+        "emoji": "👑",
+        "tagline": "Liderar o morir",
         "intro": (
-            "Estás en una trinchera. Llevas 14 meses en el frente. El mando "
-            "ordena un ataque que, según tu intuición, matará a la mitad de tu "
-            "pelotón. La obediencia es una virtud… hasta que deja de serlo."
+            "El capitán anterior murió con tu cuchillo en la espalda. Ahora todos te "
+            "miran esperando que falles. La horda obedece, pero solo mientras seas "
+            "fuerte. Un líder débil se convierte en cadáver antes del próximo invierno."
         ),
         "steps": [
-            {"step": 1, "question": "Recibes una orden que crees tácticamente errónea.",
+            {"step": 1, "question": "Un guerrero veterano desafía tu autoridad en público.",
              "options": [
-                 {"label": "Obedecer sin cuestionar", "value": "obedecer", "category": "institucional"},
-                 {"label": "Cuestionarla ante el oficial", "value": "cuestionar", "category": "rebelde"}]},
-            {"step": 2, "question": "Un compañero herido te pide que lo saques del fuego.",
+                 {"label": "Matarlo delante de todos para dar ejemplo", "value": "matar_publico", "category": "agresivo"},
+                 {"label": "Darle un puesto de honor, ganártelo", "value": "honor", "category": "estratega"}]},
+            {"step": 2, "question": "La horda pasa hambre. Debes decidir quién come primero.",
              "options": [
-                 {"label": "Volver a buscarlo", "value": "volver", "category": "leal"},
-                 {"label": "Cumplir la misión y dejarlo", "value": "dejar", "category": "estratega"}]},
-            {"step": 3, "question": "Descubres que un compañero desertó anoche.",
+                 {"label": "Los guerreros fuertes primero", "value": "fuertes", "category": "pragmatico"},
+                 {"label": "Repartir por igual entre todos", "value": "repartir", "category": "cooperativo"}]},
+            {"step": 3, "question": "Un clan vecino te propone una alianza contra un enemigo común.",
              "options": [
-                 {"label": "Delatarlo al mando", "value": "delatar", "category": "institucional"},
-                 {"label": "Callar y cubrirlo", "value": "callar", "category": "empatico"}]},
-            {"step": 4, "question": "Tienes 4 horas libres. Podrías estudiar o entrenar.",
+                 {"label": "Aceptar la alianza, aunque sea temporal", "value": "alianza", "category": "estratega"},
+                 {"label": "Rechazarla, los orcos no se alían", "value": "rechazar_alianza", "category": "tradicional"}]},
+            {"step": 4, "question": "Tu hermano de sangre comete un error que cuesta vidas.",
              "options": [
-                 {"label": "Estudiar estrategia y táctica", "value": "estudiar", "category": "disciplinado"},
-                 {"label": "Entrenar el cuerpo hasta el agotamiento", "value": "entrenar", "category": "intuitivo"}]},
-            {"step": 5, "question": "Se termina tu turno y puedes volver a casa o reengancharte.",
+                 {"label": "Castigarlo como a cualquier otro", "value": "castigar", "category": "disciplinado"},
+                 {"label": "Perdonarlo, la sangre pesa más", "value": "perdonar", "category": "leal"}]},
+            {"step": 5, "question": "Un joven orco te salva la vida en batalla.",
              "options": [
-                 {"label": "Volver a casa, ya diste suficiente", "value": "casa", "category": "libre"},
-                 {"label": "Reengancharte por tus compañeros", "value": "reengancharse", "category": "leal"}]},
+                 {"label": "Nombrarlo tu segundo al mando", "value": "nombrar", "category": "altruista"},
+                 {"label": "Mantenerlo cerca, pero sin poder real", "value": "cerca", "category": "individualista"}]},
         ],
     },
 
-    "monje": {
-        "role": "Monje",
-        "emoji": "🧘",
-        "tagline": "Silencio, disciplina y trascendencia",
+    "esclavista": {
+        "role": "Esclavista",
+        "emoji": "🔗",
+        "tagline": "Gestionar la carne débil",
         "intro": (
-            "Vives en un monasterio en el siglo XII. Has renunciado a tu familia, "
-            "a la riqueza y a tu nombre. Pero el silencio también hace preguntas, "
-            "y no todas tienen respuesta."
+            "Tú decides quién vive y quién muere entre los prisioneros. Los esclavos "
+            "construyen, minan, cocinan y sangran por el clan. Sin ti, la horda "
+            "colapsaría. Pero los débiles también muerden cuando menos lo esperas."
         ),
         "steps": [
-            {"step": 1, "question": "Es día de ayuno estricto. Tu cuerpo protesta.",
+            {"step": 1, "question": "Un esclavo humano intenta escapar pero es capturado.",
              "options": [
-                 {"label": "Respetar el ayuno completo", "value": "ayuno", "category": "disciplinado"},
-                 {"label": "Comer a escondidas un poco de pan", "value": "comer", "category": "hedonista"}]},
-            {"step": 2, "question": "Te ofrecen ser maestro de novicios, pero eso rompe tu voto de silencio.",
+                 {"label": "Ejecutarlo públicamente como escarmiento", "value": "ejecutar", "category": "agresivo"},
+                 {"label": "Azotarlo y devolverlo al trabajo", "value": "azotar", "category": "pragmatico"}]},
+            {"step": 2, "question": "Una esclava élfica te suplica por la vida de su hijo.",
              "options": [
-                 {"label": "Mantener el silencio y rechazar", "value": "silencio", "category": "estoico"},
-                 {"label": "Aceptar y enseñar con palabras", "value": "ensenar", "category": "empatico"}]},
-            {"step": 3, "question": "Un peregrino rico te ofrece un donativo generoso por tus enseñanzas.",
+                 {"label": "Perdonar al niño, no es una amenaza", "value": "perdonar_nino", "category": "empatico"},
+                 {"label": "Venderlos a ambos a otro clan", "value": "vender", "category": "individualista"}]},
+            {"step": 3, "question": "Los esclavos están débiles y ya no rinden.",
              "options": [
-                 {"label": "Aceptar el donativo para el monasterio", "value": "aceptar", "category": "pragmatico"},
-                 {"label": "Rechazarlo y seguir en pobreza", "value": "rechazar", "category": "altruista"}]},
-            {"step": 4, "question": "Puedes dormir 4 horas (canon monástico) o 7 (más descanso).",
+                 {"label": "Alimentarlos mejor para que trabajen más", "value": "alimentar", "category": "estratega"},
+                 {"label": "Reemplazarlos por nuevos prisioneros", "value": "reemplazar", "category": "pragmatico"}]},
+            {"step": 4, "question": "Un esclavo te ofrece información valiosa a cambio de libertad.",
              "options": [
-                 {"label": "Dormir 4 horas, como manda la regla", "value": "poco", "category": "disciplinado"},
-                 {"label": "Dormir 7 horas para servir mejor", "value": "mucho", "category": "pragmatico"}]},
-            {"step": 5, "question": "A los 30 años, puedes quedarte para siempre o volver al mundo.",
+                 {"label": "Aceptar el trato", "value": "aceptar_trato", "category": "estratega"},
+                 {"label": "Sacarle la información y luego matarlo", "value": "traicionar", "category": "traicion"}]},
+            {"step": 5, "question": "El capitán te ordena matar a todos los esclavos antes de huir.",
              "options": [
-                 {"label": "Quedarte y hacer votos perpetuos", "value": "quedarse", "category": "estoico"},
-                 {"label": "Volver al mundo, a vivir lo humano", "value": "volver", "category": "hedonista"}]},
+                 {"label": "Obedecer sin dudar", "value": "obedecer_matar", "category": "leal"},
+                 {"label": "Liberar a algunos en secreto", "value": "liberar", "category": "rebelde"}]},
         ],
     },
 
-    "politico": {
-        "role": "Político",
-        "emoji": "🏛️",
-        "tagline": "Poder, promesas y traiciones",
+    "asesino": {
+        "role": "Asesino del clan",
+        "emoji": "🗡️",
+        "tagline": "La traición como oficio",
         "intro": (
-            "Año 2026. Eres diputado en un parlamento polarizado. Tienes 4 años "
-            "de mandato y una reelección por delante. Cada decisión que tomes "
-            "ahora será usada en tu contra — o a tu favor — dentro de 4 años."
+            "Nadie sabe tu nombre, y si lo supieran, estarías muerto. Eliminas a los "
+            "enemigos del capitán en la oscuridad: elfos, hombres, otros orcos. Vives "
+            "en sombras y mueres en sombras. Pero el filo también corta al que lo empuña."
         ),
         "steps": [
-            {"step": 1, "question": "Un periodista te ofrece publicar una exclusiva que hundiría a tu rival.",
+            {"step": 1, "question": "El capitán te ordena matar a un orco del clan sin explicar por qué.",
              "options": [
-                 {"label": "Publicarla, la política es así", "value": "publicar", "category": "competitivo"},
-                 {"label": "Rechazarla, no todo vale", "value": "rechazar", "category": "estoico"}]},
-            {"step": 2, "question": "Tu partido te pide votar una ley en la que no crees.",
+                 {"label": "Obedecer sin preguntar", "value": "obedecer_sin", "category": "leal"},
+                 {"label": "Exigir una explicación antes de actuar", "value": "exigir", "category": "rebelde"}]},
+            {"step": 2, "question": "Tu objetivo es un niño élfico que podría ser el próximo líder enemigo.",
              "options": [
-                 {"label": "Votar con el partido (disciplina)", "value": "disciplina", "category": "institucional"},
-                 {"label": "Romper la disciplina y votar según tu conciencia", "value": "romper", "category": "rebelde"}]},
-            {"step": 3, "question": "Una encuesta dice que tu electorado quiere medidas más duras con inmigrantes.",
+                 {"label": "Matarlo, mañana será una amenaza", "value": "matar_nino", "category": "estratega"},
+                 {"label": "Perdonarlo, tu cuchillo no corta niños", "value": "perdonar_elfo", "category": "empatico"}]},
+            {"step": 3, "question": "Descubres que el capitán te mintió sobre tu última misión.",
              "options": [
-                 {"label": "Adoptar el discurso duro para ganar votos", "value": "duro", "category": "estratega"},
-                 {"label": "Mantener tu posición humanitaria", "value": "humanitario", "category": "empatico"}]},
-            {"step": 4, "question": "Un empresario te ofrece financiar tu campaña a cambio de favores futuros.",
+                 {"label": "Confrontarlo directamente", "value": "confrontar", "category": "rebelde"},
+                 {"label": "Callar y guardar la información para el futuro", "value": "guardar_info", "category": "estratega"}]},
+            {"step": 4, "question": "Un rival asesino del clan te ofrece colaborar para eliminar al capitán.",
              "options": [
-                 {"label": "Aceptar el dinero y el pacto", "value": "aceptar", "category": "pragmatico"},
-                 {"label": "Rechazarlo y financiarte con pequeños donantes", "value": "rechazar", "category": "altruista"}]},
-            {"step": 5, "question": "En el último año, puedes impulsar una reforma impopular pero necesaria.",
+                 {"label": "Aceptar y planear el golpe juntos", "value": "colaborar", "category": "cooperativo"},
+                 {"label": "Matarlo ahí mismo, es un traidor", "value": "matar_rival", "category": "leal"}]},
+            {"step": 5, "question": "Tienes la oportunidad de huir y vivir libre, lejos de todo.",
              "options": [
-                 {"label": "Impulsarla y arriesgar la reelección", "value": "impulsar", "category": "libre"},
-                 {"label": "Aplazarla y asegurar tu escaño", "value": "aplazar", "category": "seguridad"}]},
-        ],
-    },
-
-    "artista": {
-        "role": "Artista",
-        "emoji": "🎨",
-        "tagline": "Crear entre la libertad y el mercado",
-        "intro": (
-            "Año 2026. Llevas 10 años creando. Tienes una pequeña comunidad que "
-            "te sigue, pero el dinero no llega. El mercado te tienta; tu voz "
-            "interior te dice otra cosa. Cada decisión definirá qué tipo de "
-            "artista serás cuando mires atrás."
-        ),
-        "steps": [
-            {"step": 1, "question": "Una marca importante quiere patrocinar tu próxima obra.",
-             "options": [
-                 {"label": "Aceptar el patrocinio y adaptarte a su brief", "value": "aceptar", "category": "pragmatico"},
-                 {"label": "Rechazarlo y mantener tu libertad creativa", "value": "rechazar", "category": "libre"}]},
-            {"step": 2, "question": "Un crítico influyente destroza tu última exposición.",
-             "options": [
-                 {"label": "Responder públicamente", "value": "responder", "category": "status"},
-                 {"label": "Ignorarlo y seguir trabajando", "value": "ignorar", "category": "estoico"}]},
-            {"step": 3, "question": "Puedes dedicar 6 meses a una obra personal o a 6 encargos rentables.",
-             "options": [
-                 {"label": "Obra personal (sin ingresos)", "value": "personal", "category": "libre"},
-                 {"label": "Encargos rentables (con dinero)", "value": "encargos", "category": "seguridad"}]},
-            {"step": 4, "question": "Te ofrecen una residencia en el extranjero, lejos de tu comunidad.",
-             "options": [
-                 {"label": "Irte y crecer fuera", "value": "irte", "category": "curioso"},
-                 {"label": "Quedarte con tu gente", "value": "quedarte", "category": "leal"}]},
-            {"step": 5, "question": "Al final del año, decides qué tipo de artista quieres ser.",
-             "options": [
-                 {"label": "Artista de masas (éxito y visibilidad)", "value": "masas", "category": "status"},
-                 {"label": "Artista de culto (pocos, pero fieles)", "value": "culto", "category": "altruista"}]},
+                 {"label": "Huir, ya has derramado suficiente sangre", "value": "huir", "category": "libre"},
+                 {"label": "Quedarte, tu lugar es la horda", "value": "quedarte", "category": "leal"}]},
         ],
     },
 }

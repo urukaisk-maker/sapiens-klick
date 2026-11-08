@@ -1,53 +1,52 @@
-# Variantes contextuales de la pregunta del paso 2 según lo elegido en el paso 1.
-# Estructura: VARIANTS[role][step_num][category] = "texto contextualizado"
+# Variantes contextuales del paso 2 según lo elegido en el paso 1.
 
 VARIANTS = {
-    "cazador": {
+    "guerrero": {
         2: {
-            "cooperativo": "Después de compartir la carne, el grupo confía en ti. Un miembro se rompe la pierna y no puede caminar.",
-            "individualista": "Desde que guardaste la carne, hay tensión en el grupo. Un miembro se rompe la pierna y no puede caminar.",
+            "cooperativo": "Compartiste el botín y la horda te respeta. Ahora, un guerrero rival te desafía a muerte por tu puesto.",
+            "individualista": "Acaparaste el botín y hay envidia en las miradas. Un guerrero rival te desafía a muerte por tu puesto.",
         }
     },
-    "agricultor": {
+    "rastreador": {
         2: {
-            "institucional": "Has pagado el tributo. El templo te respeta. Ahora, una sequía amenaza la cosecha y el templo dice que hay que rezar más.",
-            "rebelde": "Has escondido grano. Vives con miedo a ser descubierto. Ahora, una sequía amenaza la cosecha y el templo dice que hay que rezar más.",
+            "leal": "Avisaste al capitán y te debe un favor. Ahora debes cruzar un río helado con un compañero herido que no puede nadar.",
+            "individualista": "Te fuiste solo a por prestigio. Ahora debes cruzar un río helado con un compañero herido que no puede nadar.",
         }
     },
-    "consumidor": {
+    "herrero": {
         2: {
-            "status": "Compraste la camiseta de marca; te sientes bien. Ahora, un contrato de 5 páginas para un servicio digital.",
-            "pragmatico": "Elegiste lo práctico y barato. Ahora, un contrato de 5 páginas para un servicio digital.",
+            "pragmatico": "Le cobraste el doble al guerrero y te odia. Ahora encuentras mineral enano de altísima calidad en una mina derrumbada.",
+            "disciplinado": "Rechazaste al guerrero y respetaste el turno. Ahora encuentras mineral enano de altísima calidad en una mina derrumbada.",
         }
     },
-    "emprendedor": {
+    "chaman": {
         2: {
-            "cooperativo": "Tu socio y tú estáis al 50%. Han pasado 8 meses y los usuarios no crecen.",
-            "individualista": "Tu socio tiene solo el 10%. Han pasado 8 meses y los usuarios no crecen.",
+            "institucional": "Sacrificaste al guerrero leal y la Oscuridad está satisfecha. Ahora un joven orco enfermo te pide curación.",
+            "rebelde": "Rechazaste a la Oscuridad y algo te observa en sueños. Ahora un joven orco enfermo te pide curación.",
         }
     },
-    "soldado": {
+    "domador": {
         2: {
-            "institucional": "Obedeciste la orden sin cuestionar. Ahora un compañero herido te pide que lo saques del fuego.",
-            "rebelde": "Cuestionaste al oficial delante de todos. Ahora un compañero herido te pide que lo saques del fuego.",
+            "agresivo": "Forzaste al cachorro con violencia y ahora te obedece por miedo. Un wargo mata a un guerrero del clan por error.",
+            "empatico": "Ganaste la confianza del cachorro con paciencia. Un wargo mata a un guerrero del clan por error.",
         }
     },
-    "monje": {
+    "capitan": {
         2: {
-            "disciplinado": "Respetaste el ayuno completo. Ahora te ofrecen ser maestro de novicios, pero eso rompería tu voto de silencio.",
-            "hedonista": "Comiste a escondidas un poco de pan. Ahora te ofrecen ser maestro de novicios, pero eso rompería tu voto de silencio.",
+            "agresivo": "Mataste al veterano delante de todos. Ahora la horda pasa hambre y debes decidir quién come primero.",
+            "estratega": "Le diste un puesto de honor al veterano y te ganaste su lealtad. Ahora la horda pasa hambre y debes decidir quién come primero.",
         }
     },
-    "politico": {
+    "esclavista": {
         2: {
-            "competitivo": "Publicaste la exclusiva que hundió a tu rival. Ahora tu partido te pide votar una ley en la que no crees.",
-            "estoico": "Rechazaste la exclusiva; tu rival sigue en pie. Ahora tu partido te pide votar una ley en la que no crees.",
+            "agresivo": "Ejecutaste al esclavo fugitivo como escarmiento. Ahora una esclava élfica te suplica por la vida de su hijo.",
+            "pragmatico": "Azotaste al esclavo y lo devolviste al trabajo. Ahora una esclava élfica te suplica por la vida de su hijo.",
         }
     },
-    "artista": {
+    "asesino": {
         2: {
-            "pragmatico": "Aceptaste el patrocinio de la marca. Ahora un crítico influyente destroza tu última exposición.",
-            "libre": "Rechazaste el patrocinio; sigues sin dinero. Ahora un crítico influyente destroza tu última exposición.",
+            "leal": "Obedeciste al capitán sin preguntar. Ahora tu objetivo es un niño élfico que podría ser el próximo líder enemigo.",
+            "rebelde": "Exigiste una explicación al capitán y te mira con recelo. Ahora tu objetivo es un niño élfico que podría ser el próximo líder enemigo.",
         }
     },
 }

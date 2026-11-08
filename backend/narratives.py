@@ -1,4 +1,3 @@
-# Agrupación de categorías en "modos de decidir"
 CATEGORY_GROUPS = {
     "cooperativo": "prosocial", "empatico": "prosocial",
     "altruista": "prosocial", "leal": "prosocial",
@@ -13,88 +12,86 @@ CATEGORY_GROUPS = {
     "tradicional": "tradition", "institucional": "tradition",
     "conformista": "tradition",
     "riesgo": "change", "innovador": "change", "libre": "change",
+    "agresivo": "aggressive", "traicion": "aggressive", "ambicion": "aggressive",
+    "liderazgo": "leader", "autenticidad": "leader",
+    "sintesis": "leader", "poder": "leader",
+    "narrador": "storyteller", "silencio": "storyteller",
+    "belleza": "storyteller", "legado": "storyteller",
 }
 
-# Cómo se interpreta cada modo de decidir (concepto de Sapiens)
 GROUP_INSIGHTS = {
     "prosocial": (
-        "priorizaste al grupo sobre ti mismo. La cooperación es el mecanismo "
-        "que permitió a Sapiens superar a especies más fuertes, pero también "
-        "es frágil: requiere confianza, y la confianza se agota."
+        "elegiste como un orco que cree en la horda. La fuerza del clan está en "
+        "el vínculo entre sus miembros. Los lobos solitarios mueren; las manadas "
+        "sobreviven. Pero la lealtad también se paga con sangre."
     ),
     "self": (
-        "priorizaste tu propio interés. No es cinismo — es la lógica que la "
-        "evolución implantó en nosotros. Pero un mundo de solo intereses "
-        "individuales se vuelve invivible, y por eso los sapiens inventaron "
-        "las normas."
+        "elegiste como un orco que solo responde ante sí mismo. En las Tierras "
+        "Oscuras, el interés propio no es cinismo: es instinto. Pero el orco que "
+        "nunca comparte, muere rodeado de cadáveres que él mismo creó."
     ),
     "cognitive": (
-        "priorizaste pensar antes de actuar. La reflexión es costosa: consume "
-        "energía y tiempo. Los sapiens la usan con moderación, y justo por "
-        "eso quien la usa bien obtiene ventaja."
+        "elegiste como un orco que piensa antes de golpear. La mente afilada vale "
+        "más que cualquier hacha. Pero el exceso de cálculo también mata: hay "
+        "momentos en que solo la furia decide."
     ),
     "discipline": (
-        "priorizaste el autocontrol. La disciplina es una ficción que nos "
-        "contamos para domesticar al animal que llevamos dentro — y funciona, "
-        "aunque nunca del todo."
+        "elegiste como un orco que se controla. En un mundo de impulsos, la "
+        "disciplina es poder. El herrero que golpea mil veces el mismo punto es "
+        "más temido que el que grita y ataca sin pensar."
     ),
     "power": (
-        "priorizaste el estatus, la influencia o la confrontación. El estatus "
-        "es una de las ficciones más antiguas: existe solo porque todos lo "
-        "reconocen. Cambian sus símbolos (coronas → seguidores), pero no su "
-        "lógica."
+        "elegiste como un orco que busca el trono. El poder no se hereda: se "
+        "arranca. Cada guerrero ambicioso mira al capitán con hambre. Pero el "
+        "trono tiene filos por todos lados."
     ),
     "tradition": (
-        "priorizaste lo establecido. La tradición no es simple inercia: es un "
-        "ahorro cognitivo. Cuando no puedes saberlo todo, confiar en lo que "
-        "funcionó antes es una estrategia racional — hasta que deja de serlo."
+        "elegiste como un orco que respeta la ley del clan. Las tradiciones no son "
+        "cadenas: son el recuerdo de los errores de otros. Pero cuando la tradición "
+        "deja de servir al clan, se convierte en veneno."
     ),
     "change": (
-        "priorizaste lo nuevo. La innovación no siempre gana, pero sin ella "
-        "no habría sapiens. Es la fuerza que rompe los órdenes imaginados "
-        "cuando ya no sirven."
+        "elegiste como un orco que rompe las reglas. Los que innovan ganan "
+        "batallas que nadie creía posibles. Pero los innovadores también son los "
+        "primeros en morir cuando fallan."
+    ),
+    "aggressive": (
+        "elegiste como un orco que no duda en derramar sangre. La agresividad no "
+        "es locura: es un idioma que las Tierras Oscuras entienden. Pero el orco "
+        "que solo sabe matar, termina matándose a sí mismo."
+    ),
+    "leader": (
+        "elegiste como un orco destinado a mandar. Los capitanes legendarios no "
+        "son los más fuertes: son los que saben cuándo golpear y cuándo esperar. "
+        "El liderazgo es el arte de hacer que otros mueran por ti."
+    ),
+    "storyteller": (
+        "elegiste como un orco que deja huella. Las crónicas del clan no las "
+        "escriben los escribas: las escriben los guerreros que sobreviven para "
+        "contarlas. Tu historia aún no está terminada."
     ),
 }
 
-# Cómo cada rol contextualiza la decisión
 ROLE_TWISTS = {
-    "cazador": (
-        "Desde la banda de cazadores-recolectores, tus decisiones reflejan "
-        "cómo un grupo pequeño gestiona la confianza sin Estado ni dinero."
-    ),
-    "agricultor": (
-        "Como súbdito agrícola bajo el rey y los dioses, tus elecciones "
-        "revelan cómo se negocia la obediencia cuando por primera vez existe "
-        "un poder que no puedes ver."
-    ),
-    "consumidor": (
-        "Como consumidor moderno, tus decisiones hablan de cómo navegas un "
-        "mundo donde las ficciones ya no son dioses, sino marcas y algoritmos."
-    ),
-    "emprendedor": (
-        "En tu papel de emprendedor digital, tus elecciones dibujan el tipo "
-        "de apuesta que estás dispuesto a hacer con tu tiempo, tu dinero y "
-        "tu control."
-    ),
-    "soldado": (
-        "En la trinchera, tus decisiones revelan qué queda de la obediencia "
-        "cuando ya no estás seguro de que la orden tenga sentido."
-    ),
-    "monje": (
-        "Desde el monasterio, tus elecciones apuntan hacia qué tipo de "
-        "trascendencia buscas: la del silencio, la del servicio o la del "
-        "retorno al mundo."
-    ),
+    "guerrero": "Como guerrero del clan Urukais Klick, tus decisiones hablan de cómo un orco entiende la fuerza, la gloria y el derramamiento de sangre.",
+    "rastreador": "Como rastreador, tus elecciones revelan qué tipo de orco eres cuando nadie te ve: el que avisa al clan o el que persigue su propio prestigio.",
+    "herrero": "Como herrero de guerra, tus decisiones muestran qué forjas con tu vida: armas para el clan, poder para ti, o algo más oscuro.",
+    "chaman": "Como chamán oscuro, tus elecciones revelan cuánto estás dispuesto a cederle a la Oscuridad para obtener poder.",
+    "domador": "Como domador de wargos, tus decisiones hablan de cómo tratas a las bestias: con mano firme, con paciencia o con crueldad.",
+    "capitan": "Como capitán de la horda, tus elecciones dibujan el tipo de líder que serías: el que inspira o el que solo inspira miedo.",
+    "esclavista": "Como esclavista del clan, tus decisiones revelan qué tipo de orco eres cuando tienes poder sobre la carne débil.",
+    "asesino": "Como asesino del clan, tus elecciones muestran qué queda de ti cuando el filo ya no distingue entre enemigos y aliados.",
 }
 
-# Cierre según el rol
 ROLE_HOOKS = {
-    "cazador": "La banda te habría reconocido como uno de los suyos.",
-    "agricultor": "El templo habría anotado tu nombre en tablillas de barro.",
-    "consumidor": "El algoritmo ya tiene tu perfil.",
-    "emprendedor": "En el ecosistema startup, encajarías en una de las narrativas que los inversores adoran.",
-    "soldado": "Tus compañeros lo recordarían cuando termine la guerra.",
-    "monje": "El abad habría tomado nota en el libro de capítulos.",
+    "guerrero": "Los guerreros del clan susurrarían tu nombre con respeto.",
+    "rastreador": "El capitán te daría las misiones más peligrosas.",
+    "herrero": "Tu yunque sonaría durante generaciones en la Montaña Oscura.",
+    "chaman": "La Oscuridad misma tomaría nota de tu nombre.",
+    "domador": "Los wargos te reconocerían como uno de los suyos.",
+    "capitan": "La horda entera temblaría cuando entraras en la sala del trono.",
+    "esclavista": "Los prisioneros te temerían más que a la muerte.",
+    "asesino": "Ningún enemigo del clan dormiría tranquilo mientras vivieras.",
 }
 
 
