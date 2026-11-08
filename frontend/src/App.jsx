@@ -3,7 +3,7 @@ import {
   getRoles, getGlobalStats, getRoleStats, getLeaderboard, createSession,
   getScenario, postDecision, getProfile, getComparison, getUserByName,
   getAllCards, getCardsBatch, getAchievements, getLeague,
-  getBio, saveBio, getFavorites, addFavorite, removeFavorite,
+  getBio, saveBio, getFavorites, addFavorite, removeFavorite, exportMyData,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
@@ -13,6 +13,7 @@ import { SkeletonCard } from './components/Skeleton';
 import { fireConfetti } from './utils/confetti';
 import Avatar from './components/Avatar';
 import Embers from './components/Embers';
+import ShareCard from './components/ShareCard';
 import { fireBlood } from './utils/bloodSplash';
 import {
   isSoundEnabled, setSoundEnabled,
@@ -536,6 +537,24 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
     setEditingBio(true);
   }
 
+  async function downloadData() {
+    if (!name) return;
+    try {
+      const payload = await exportMyData(name);
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `urukais-${name}-${new Date().toISOString().slice(0, 10)}.json`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } catch {
+      alert('No se pudieron descargar tus datos');
+    }
+  }
+
   const myPosition = name ? leaderboard.findIndex((l) => l.name === name) + 1 : 0;
 
   return (
@@ -559,7 +578,18 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
               <p className="subtitle" style={{ marginBottom: 0 }}>🏆 Posición #{myPosition} en el leaderboard</p>
             )}
           </div>
-          <button className="btn ghost small" onClick={onEditName}>Cambiar nombre</button>
+          <div style={{ display: 'flex', gap: '.5rem', flexWrap: 'wrap' }}>
+            {name && (
+              <button
+                className="btn ghost small"
+                onClick={downloadData}
+                title="Descargar todos mis datos (RGPD)"
+              >
+                📥 Descargar datos
+              </button>
+            )}
+            <button className="btn ghost small" onClick={onEditName}>Cambiar nombre</button>
+          </div>
         </div>
 
         {name && (
@@ -722,6 +752,8 @@ export default function App() {
     localStorage.getItem(LS_THEME) || 'dark'
   );
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
+  const [showShare, setShowShare] = useState(false);
+  const [shareLeague, setShareLeague] = useState(null);
 
   useEffect(() => {
     const n = localStorage.getItem(LS_NAME) || '';
@@ -876,12 +908,19 @@ export default function App() {
     setPhase('collection');
   }
 
-  function shareResult() {
+  async function shareResult() {
     if (!profile) return;
-    const text = `He luchado en Urukais Klick como ${profile.role}. Mi categoría dominante: ${profile.dominant}. ¿Y tú cómo decides? ${APP_LINKS.netlify}`;
-    navigator.clipboard.writeText(text)
-      .then(() => { setToast('Resultado copiado'); setTimeout(() => setToast(''), 2200); })
-      .catch(() => { setToast('No se pudo copiar'); setTimeout(() => setToast(''), 2200); });
+    if (userName) {
+      try {
+        const l = await getLeague(userName);
+        setShareLeague(l);
+      } catch {
+        setShareLeague(null);
+      }
+    } else {
+      setShareLeague(null);
+    }
+    setShowShare(true);
   }
 
   function resumeGame() {
@@ -1016,6 +1055,17 @@ export default function App() {
         </div>
       </main>
       <Footer onNavigate={navigateTo} />
+
+      {showShare && profile && (
+        <ShareCard
+          profile={profile}
+          unlockedCard={unlockedCard}
+          league={shareLeague}
+          userName={userName}
+          onClose={() => setShowShare(false)}
+        />
+      )}
+
       {toast && <div className="toast">{toast}</div>}
     </div>
   );

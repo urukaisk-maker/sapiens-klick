@@ -81,3 +81,9 @@ export const removeFavorite = (name, cardKey) =>
   fetch(`${API_BASE}/favorites/${encodeURIComponent(name)}/${encodeURIComponent(cardKey)}`, {
     method: 'DELETE',
   }).then(jsonOrThrow);
+
+
+
+// ---------- RGPD ----------
+export const exportMyData = (name) =>
+  fetch(`${API_BASE}/export/my-data/${encodeURIComponent(name)}`).then(jsonOrThrow);

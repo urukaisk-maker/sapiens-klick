@@ -1,4 +1,5 @@
 from typing import Optional, List
+from datetime import datetime
 from collections import Counter
 
 from fastapi import FastAPI, HTTPException, Depends
@@ -360,3 +361,58 @@ def remove_favorite(name: str, card_key: str, db: Session = Depends(get_db)):
      .delete())
     db.commit()
     return {"ok": True, "favorited": False}
+
+
+# ---------- RGPD: exportar mis datos ----------
+@app.get("/api/export/my-data/{name}")
+def export_my_data(name: str, db: Session = Depends(get_db)):
+    from fastapi.responses import JSONResponse
+
+    users = db.query(User).filter(User.name == name).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="Nombre no encontrado")
+
+    user_ids = [u.id for u in users]
+
+    prof = db.query(UserProfile).filter(UserProfile.name == name).first()
+    bio = prof.bio if prof else None
+
+    favorites = [f.card_key for f in db.query(Favorite).filter(Favorite.name == name).all()]
+
+    sessions = []
+    for u in users:
+        decisions = (db.query(Decision)
+                     .filter(Decision.user_id == u.id)
+                     .order_by(Decision.id).all())
+        sessions.append({
+            "user_id": u.id,
+            "role": u.role,
+            "created_at": u.created_at.isoformat(),
+            "decisions": [
+                {"step": d.step, "choice": d.choice, "category": d.category}
+                for d in decisions
+            ],
+        })
+
+    cards = sorted({c.card_key for c in db.query(CardUnlock)
+                    .filter(CardUnlock.user_id.in_(user_ids)).all()})
+
+    data = {
+        "exported_at": datetime.utcnow().isoformat() + "Z",
+        "name": name,
+        "bio": bio,
+        "stats": {
+            "sessions": len(sessions),
+            "decisions": sum(len(s["decisions"]) for s in sessions),
+            "cards_unlocked": len(cards),
+            "favorites": len(favorites),
+        },
+        "sessions": sessions,
+        "cards_unlocked": cards,
+        "favorites": favorites,
+    }
+
+    return JSONResponse(
+        content=data,
+        headers={"Content-Disposition": f"attachment; filename=urukais-{name}.json"},
+    )
