@@ -1,8 +1,8 @@
 LEAGUES = [
-    {"key": "bronce",   "name": "Bronce",   "emoji": "🥉", "min_decisions": 0,   "color": "#cd7f32"},
-    {"key": "plata",    "name": "Plata",    "emoji": "🥈", "min_decisions": 25,  "color": "#c0c0c0"},
-    {"key": "oro",      "name": "Oro",      "emoji": "🥇", "min_decisions": 75,  "color": "#ffd700"},
-    {"key": "diamante", "name": "Diamante", "emoji": "💎", "min_decisions": 150, "color": "#b9f2ff"},
+    {"key": "bronce",   "name": "Hierro oxidado", "emoji": "🪨", "min_decisions": 0,   "color": "#cd7f32"},
+    {"key": "plata",    "name": "Acero forjado",  "emoji": "⚔️", "min_decisions": 25,  "color": "#c0c0c0"},
+    {"key": "oro",      "name": "Acero negro",    "emoji": "🖤", "min_decisions": 75,  "color": "#ffd700"},
+    {"key": "diamante", "name": "Mithril",        "emoji": "💎", "min_decisions": 150, "color": "#b9f2ff"},
 ]
 
 

@@ -5,55 +5,55 @@ from models import User, Decision, CardUnlock
 
 
 ACHIEVEMENTS = [
-    {"key": "primera_partida", "title": "Primera partida", "emoji": "🎬",
-     "desc": "Completa tu primera partida", "target": 1, "metric": "sessions"},
-    {"key": "veterano", "title": "Veterano", "emoji": "🎖️",
-     "desc": "Completa 10 partidas", "target": 10, "metric": "sessions"},
-    {"key": "leyenda", "title": "Leyenda", "emoji": "👑",
-     "desc": "Completa 25 partidas", "target": 25, "metric": "sessions"},
-    {"key": "explorador", "title": "Explorador", "emoji": "🧭",
-     "desc": "Juega 3 roles distintos", "target": 3, "metric": "distinct_roles"},
-    {"key": "viajero", "title": "Viajero", "emoji": "🌍",
-     "desc": "Juega 5 roles distintos", "target": 5, "metric": "distinct_roles"},
-    {"key": "maestro_roles", "title": "Maestro de roles", "emoji": "🎭",
-     "desc": "Juega los 8 roles", "target": 8, "metric": "distinct_roles"},
-    {"key": "coleccionista", "title": "Coleccionista", "emoji": "🃏",
+    {"key": "primera_partida", "title": "Primer saqueo", "emoji": "🪓",
+     "desc": "Completa tu primera batalla en la horda", "target": 1, "metric": "sessions"},
+    {"key": "veterano", "title": "Veterano de la horda", "emoji": "🎖️",
+     "desc": "Completa 10 batallas", "target": 10, "metric": "sessions"},
+    {"key": "leyenda", "title": "Leyenda de Mordor", "emoji": "👑",
+     "desc": "Completa 25 batallas", "target": 25, "metric": "sessions"},
+    {"key": "explorador", "title": "Ojo en la oscuridad", "emoji": "🧭",
+     "desc": "Juega 3 arquetipos distintos", "target": 3, "metric": "distinct_roles"},
+    {"key": "viajero", "title": "Errante de las Tierras Oscuras", "emoji": "🌍",
+     "desc": "Juega 5 arquetipos distintos", "target": 5, "metric": "distinct_roles"},
+    {"key": "maestro_roles", "title": "Señor de las ocho sendas", "emoji": "🎭",
+     "desc": "Juega los 8 arquetipos", "target": 8, "metric": "distinct_roles"},
+    {"key": "coleccionista", "title": "Coleccionista de botín", "emoji": "🃏",
      "desc": "Desbloquea 10 cartas", "target": 10, "metric": "cards"},
-    {"key": "bibliotecario", "title": "Bibliotecario", "emoji": "📚",
+    {"key": "bibliotecario", "title": "Guardián de reliquias", "emoji": "📚",
      "desc": "Desbloquea 20 cartas", "target": 20, "metric": "cards"},
-    {"key": "archivero", "title": "Archivero", "emoji": "🗃️",
+    {"key": "archivero", "title": "Cronista de la horda", "emoji": "🗃️",
      "desc": "Desbloquea 30 cartas", "target": 30, "metric": "cards"},
-    {"key": "decidido", "title": "Decidido", "emoji": "⚡",
+    {"key": "decidido", "title": "El que no duda", "emoji": "⚡",
      "desc": "Acumula 100 decisiones", "target": 100, "metric": "decisions"},
-    {"key": "racha_3", "title": "Racha x3", "emoji": "🔥",
+    {"key": "racha_3", "title": "Tres lunas de sangre", "emoji": "🔥",
      "desc": "Juega 3 días seguidos", "target": 3, "metric": "streak"},
-    {"key": "racha_7", "title": "Racha x7", "emoji": "🌟",
+    {"key": "racha_7", "title": "Siete lunas de sangre", "emoji": "🌟",
      "desc": "Juega 7 días seguidos", "target": 7, "metric": "streak"},
 ]
 
 
-# Logros secretos: no aparecen en la API hasta que se desbloquean.
+# Logros secretos: solo aparecen en la API cuando se desbloquean.
 SECRET_ACHIEVEMENTS = [
-    {"key": "noche", "title": "Ave nocturna", "emoji": "🌙",
-     "desc": "Juega una partida después de medianoche", "target": 1, "metric": "night_played"},
-    {"key": "politico_rebelde", "title": "Rompefilas", "emoji": "✊",
-     "desc": "Elige 'romper la disciplina' como político", "target": 1, "metric": "politico_romper"},
-    {"key": "monje_retorno", "title": "Vuelta al mundo", "emoji": "🌍",
-     "desc": "Un monje que vuelve al mundo al final", "target": 1, "metric": "monje_volver"},
-    {"key": "soldado_empatico", "title": "El que vuelve", "emoji": "🪖",
-     "desc": "Vuelve a buscar al herido como soldado", "target": 1, "metric": "soldado_volver"},
-    {"key": "cazador_curioso", "title": "Explorador innato", "emoji": "🧭",
-     "desc": "Explora el bosque del chamán", "target": 1, "metric": "cazador_explorar"},
-    {"key": "artista_libre", "title": "Indomable", "emoji": "🎨",
-     "desc": "Rechaza el patrocinio como artista", "target": 1, "metric": "artista_rechazar"},
-    {"key": "emprendedor_solo", "title": "Lobo solitario", "emoji": "🐺",
-     "desc": "Sigue solo como emprendedor", "target": 1, "metric": "emprendedor_solo"},
-    {"key": "consumidor_reflexivo", "title": "Lo leo todo", "emoji": "📖",
-     "desc": "Lee el contrato entero antes de firmar", "target": 1, "metric": "consumidor_leer"},
-    {"key": "agricultor_rebelde", "title": "Revuelta", "emoji": "🔥",
-     "desc": "Únete a la revuelta como agricultor", "target": 1, "metric": "agricultor_rebelarse"},
-    {"key": "todos_roles", "title": "Antropólogo", "emoji": "🧑‍🔬",
-     "desc": "Completa al menos una partida con cada uno de los 8 roles",
+    {"key": "noche", "title": "Cazador nocturno", "emoji": "🌙",
+     "desc": "Lucha en una batalla después de medianoche", "target": 1, "metric": "night_played"},
+    {"key": "capitan_desafiar", "title": "El que desafió al capitán", "emoji": "✊",
+     "desc": "Desafía una orden suicida como capitán", "target": 1, "metric": "capitan_desafiar"},
+    {"key": "chaman_rechazar", "title": "El que rechazó a la Oscuridad", "emoji": "🩸",
+     "desc": "Rechaza el pacto de la Oscuridad como chamán", "target": 1, "metric": "chaman_rechazar"},
+    {"key": "asesino_perdonar", "title": "El filo que no cortó", "emoji": "🗡️",
+     "desc": "Perdona al niño élfico como asesino", "target": 1, "metric": "asesino_perdonar"},
+    {"key": "rastreador_cueva", "title": "El que miró la Oscuridad", "emoji": "🕳️",
+     "desc": "Refúgiate en la cueva desconocida como rastreador", "target": 1, "metric": "rastreador_cueva"},
+    {"key": "esclavista_liberar", "title": "El que rompió cadenas", "emoji": "🔗",
+     "desc": "Libera esclavos en secreto como esclavista", "target": 1, "metric": "esclavista_liberar"},
+    {"key": "herrero_ensenar", "title": "Maestro del yunque", "emoji": "⚒️",
+     "desc": "Enseña tus secretos al aprendiz como herrero", "target": 1, "metric": "herrero_ensenar"},
+    {"key": "guerrero_compartir", "title": "El que repartió el botín", "emoji": "🤝",
+     "desc": "Comparte el botín con la horda como guerrero", "target": 1, "metric": "guerrero_compartir"},
+    {"key": "domador_paciencia", "title": "El que domó con paciencia", "emoji": "🐺",
+     "desc": "Domestica al cachorro con paciencia como domador", "target": 1, "metric": "domador_paciencia"},
+    {"key": "todos_roles", "title": "Cronista de las ocho sendas", "emoji": "📖",
+     "desc": "Completa al menos una partida con cada uno de los 8 arquetipos",
      "target": 8, "metric": "distinct_roles_all"},
 ]
 
@@ -99,7 +99,7 @@ def compute_achievements(name: str, db: Session):
     streak = compute_streak(dates)
     last_played = max(u.created_at for u in users).isoformat()
 
-    # --- Métricas para logros secretos ---
+    # Métricas para logros secretos
     has_night = any(u.created_at.hour < 5 for u in users)
 
     choices_by_role = {}
@@ -109,14 +109,14 @@ def compute_achievements(name: str, db: Session):
 
     secret_metrics = {
         "night_played": 1 if has_night else 0,
-        "politico_romper": 1 if "romper" in choices_by_role.get("politico", set()) else 0,
-        "monje_volver": 1 if "volver" in choices_by_role.get("monje", set()) else 0,
-        "soldado_volver": 1 if "volver" in choices_by_role.get("soldado", set()) else 0,
-        "cazador_explorar": 1 if "explorar" in choices_by_role.get("cazador", set()) else 0,
-        "artista_rechazar": 1 if "rechazar" in choices_by_role.get("artista", set()) else 0,
-        "emprendedor_solo": 1 if "solo" in choices_by_role.get("emprendedor", set()) else 0,
-        "consumidor_leer": 1 if "leer" in choices_by_role.get("consumidor", set()) else 0,
-        "agricultor_rebelarse": 1 if "rebelarse" in choices_by_role.get("agricultor", set()) else 0,
+        "capitan_desafiar": 1 if "desafiar" in choices_by_role.get("capitan", set()) else 0,
+        "chaman_rechazar": 1 if "rechazar_pacto" in choices_by_role.get("chaman", set()) else 0,
+        "asesino_perdonar": 1 if "perdonar_elfo" in choices_by_role.get("asesino", set()) else 0,
+        "rastreador_cueva": 1 if "cueva" in choices_by_role.get("rastreador", set()) else 0,
+        "esclavista_liberar": 1 if "liberar" in choices_by_role.get("esclavista", set()) else 0,
+        "herrero_ensenar": 1 if "ensenar" in choices_by_role.get("herrero", set()) else 0,
+        "guerrero_compartir": 1 if "compartir" in choices_by_role.get("guerrero", set()) else 0,
+        "domador_paciencia": 1 if "paciencia" in choices_by_role.get("domador", set()) else 0,
         "distinct_roles_all": distinct_roles,
     }
 
@@ -128,7 +128,7 @@ def compute_achievements(name: str, db: Session):
         "streak": streak,
     }
 
-    # --- Logros visibles ---
+    # Logros visibles
     result = []
     for a in ACHIEVEMENTS:
         current = metrics.get(a["metric"], 0)
@@ -145,7 +145,7 @@ def compute_achievements(name: str, db: Session):
             "secret": False,
         })
 
-    # --- Logros secretos: solo aparecen si están desbloqueados ---
+    # Logros secretos: solo aparecen si están desbloqueados
     secret_unlocked_keys = []
     for a in SECRET_ACHIEVEMENTS:
         current = secret_metrics.get(a["metric"], 0)
