@@ -3,6 +3,7 @@ import {
   getRoles, getGlobalStats, getRoleStats, getLeaderboard, createSession,
   getScenario, postDecision, getProfile, getComparison, getUserByName,
   getAllCards, getCardsBatch, getAchievements, getLeague,
+  getBio, saveBio, getFavorites, addFavorite, removeFavorite,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
@@ -341,19 +342,98 @@ function ResultScreen({ profile, comparison, unlockedCard, onRestart, onCollecti
   );
 }
 
-function CollectionScreen({ allCards, unlockedCards }) {
+function CollectionScreen({ allCards, unlockedCards, userName }) {
+  const [favorites, setFavorites] = useState([]);
+  const [filter, setFilter] = useState('all');
+
+  useEffect(() => {
+    if (!userName) return;
+    getFavorites(userName)
+      .then((d) => setFavorites(d.favorites || []))
+      .catch(() => {});
+  }, [userName]);
+
+  async function toggleFav(cardKey, e) {
+    e.stopPropagation();
+    if (!userName) return;
+    const isFav = favorites.includes(cardKey);
+    setFavorites((prev) =>
+      isFav ? prev.filter((k) => k !== cardKey) : [...prev, cardKey]
+    );
+    try {
+      if (isFav) await removeFavorite(userName, cardKey);
+      else await addFavorite(userName, cardKey);
+    } catch {
+      setFavorites((prev) =>
+        isFav ? [...prev, cardKey] : prev.filter((k) => k !== cardKey)
+      );
+    }
+  }
+
+  const filtered = allCards.filter((c) => {
+    const unlocked = unlockedCards.includes(c.key);
+    const isFav = favorites.includes(c.key);
+    if (filter === 'fav') return isFav;
+    if (filter === 'unlocked') return unlocked;
+    return true;
+  });
+
   return (
     <div className="fade-in">
       <div className="card">
         <div className="badge">Colección</div>
         <h1 style={{ marginBottom: '.4rem' }}>Mis cartas</h1>
-        <p className="subtitle">{unlockedCards.length} de {allCards.length} cartas desbloqueadas</p>
+        <p className="subtitle">
+          {unlockedCards.length} de {allCards.length} cartas desbloqueadas ·{' '}
+          {favorites.length} favoritas
+        </p>
+        <div className="fav-header">
+          <div className="fav-filter">
+            <button
+              className={filter === 'all' ? 'active' : ''}
+              onClick={() => setFilter('all')}
+            >
+              Todas
+            </button>
+            <button
+              className={filter === 'unlocked' ? 'active' : ''}
+              onClick={() => setFilter('unlocked')}
+            >
+              Desbloqueadas
+            </button>
+            <button
+              className={filter === 'fav' ? 'active' : ''}
+              onClick={() => setFilter('fav')}
+            >
+              ⭐ Favoritas
+            </button>
+          </div>
+        </div>
       </div>
+
+      {filtered.length === 0 && (
+        <div className="card" style={{ textAlign: 'center', color: 'var(--muted)' }}>
+          {filter === 'fav'
+            ? 'Aún no has marcado ninguna carta como favorita. Pulsa ⭐ en cualquier carta.'
+            : 'No hay cartas que coincidan con este filtro.'}
+        </div>
+      )}
+
       <div className="grid-cards">
-        {allCards.map((c) => {
+        {filtered.map((c) => {
           const unlocked = unlockedCards.includes(c.key);
+          const isFav = favorites.includes(c.key);
           return (
             <div key={c.key} className={`kcard ${unlocked ? '' : 'locked'}`}>
+              {unlocked && userName && (
+                <button
+                  className={`fav-btn ${isFav ? 'active' : ''}`}
+                  onClick={(e) => toggleFav(c.key, e)}
+                  title={isFav ? 'Quitar de favoritas' : 'Marcar como favorita'}
+                >
+                  {isFav ? '⭐' : '☆'}
+                </button>
+              )}
               <div className="kcard-emoji">{c.emoji}</div>
               <div className="kcard-title">{c.title}</div>
               <div className="kcard-body">
@@ -400,6 +480,11 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
+  const [bio, setBio] = useState('');
+  const [editingBio, setEditingBio] = useState(false);
+  const [bioDraft, setBioDraft] = useState('');
+  const [savingBio, setSavingBio] = useState(false);
+
   useEffect(() => {
     if (!name) {
       setError('Estás jugando como anónimo. Configura un nombre para tener perfil persistente.');
@@ -413,7 +498,25 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
         ? 'Todavía no hay sesiones con este nombre.' : e.message))
       .finally(() => setLoading(false));
     getLeague(name).then(setLeague).catch(() => {});
+    getBio(name).then((d) => setBio(d.bio || '')).catch(() => {});
   }, [name]);
+
+  async function saveBioChanges() {
+    if (!name) return;
+    setSavingBio(true);
+    try {
+      const d = await saveBio(name, bioDraft);
+      setBio(d.bio || '');
+      setEditingBio(false);
+    } catch {} finally {
+      setSavingBio(false);
+    }
+  }
+
+  function startEditBio() {
+    setBioDraft(bio);
+    setEditingBio(true);
+  }
 
   const myPosition = name ? leaderboard.findIndex((l) => l.name === name) + 1 : 0;
 
@@ -440,6 +543,44 @@ function ProfileScreen({ name, roleStats, leaderboard, onEditName }) {
           </div>
           <button className="btn ghost small" onClick={onEditName}>Cambiar nombre</button>
         </div>
+
+        {name && (
+          <>
+            {editingBio ? (
+              <div style={{ marginTop: '1rem' }}>
+                <textarea
+                  className="bio-textarea"
+                  value={bioDraft}
+                  onChange={(e) => setBioDraft(e.target.value.slice(0, 280))}
+                  placeholder="Escribe una bio breve (máx. 280 caracteres)…"
+                  maxLength={280}
+                />
+                <div className="bio-counter">{bioDraft.length} / 280</div>
+                <div className="actions" style={{ marginTop: '.5rem' }}>
+                  <button
+                    className="btn small"
+                    onClick={saveBioChanges}
+                    disabled={savingBio}
+                  >
+                    {savingBio ? 'Guardando…' : 'Guardar'}
+                  </button>
+                  <button
+                    className="btn ghost small"
+                    onClick={() => setEditingBio(false)}
+                    disabled={savingBio}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <div className={`bio-box ${bio ? '' : 'empty'}`} style={{ marginTop: '1rem' }}>
+                {bio || 'Sin bio todavía. Pulsa "Editar" para añadir una.'}
+                <button className="bio-edit-btn" onClick={startEditBio}>Editar</button>
+              </div>
+            )}
+          </>
+        )}
 
         {loading && <div style={{ marginTop: '1rem' }}><SkeletonCard /></div>}
         {error && <p style={{ color: 'var(--muted)', marginTop: '1rem' }}>{error}</p>}
@@ -800,7 +941,11 @@ export default function App() {
             onRestart={goHome} onCollection={openCollection} onShare={shareResult} />
         )}
         {phase === 'collection' && (
-          <CollectionScreen allCards={allCards} unlockedCards={userCards} />
+          <CollectionScreen
+            allCards={allCards}
+            unlockedCards={userCards}
+            userName={userName}
+          />
         )}
         {phase === 'leaderboard' && (
           <LeaderboardScreen leaderboard={leaderboard} userName={userName} />

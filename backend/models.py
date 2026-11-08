@@ -39,3 +39,22 @@ class CardUnlock(Base):
     unlocked_at = Column(DateTime, default=datetime.utcnow)
 
     user = relationship("User", back_populates="cards")
+
+
+
+class UserProfile(Base):
+    __tablename__ = "user_profiles"
+
+    name = Column(String(64), primary_key=True)
+    bio = Column(String(280), nullable=True)
+    updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+
+class Favorite(Base):
+    __tablename__ = "favorites"
+    __table_args__ = (UniqueConstraint("name", "card_key", name="uq_fav_name_card"),)
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(64), nullable=False, index=True)
+    card_key = Column(String, nullable=False)
+    created_at = Column(DateTime, default=datetime.utcnow)

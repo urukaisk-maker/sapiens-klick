@@ -913,3 +913,119 @@ code {
   border-color: var(--accent);
   color: var(--accent);
 }
+
+/* ---------- Bio en perfil ---------- */
+.bio-box {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-2);
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.05rem;
+  color: var(--text);
+  line-height: 1.6;
+  position: relative;
+}
+.bio-box.empty {
+  font-family: inherit;
+  font-size: 0.9rem;
+  color: var(--muted);
+  font-style: italic;
+}
+.bio-edit-btn {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.6rem;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  border-radius: 6px;
+  padding: 0.2rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+.bio-edit-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.bio-textarea {
+  width: 100%;
+  min-height: 80px;
+  padding: 0.8rem;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-family: inherit;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  resize: vertical;
+}
+.bio-textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+}
+.bio-counter {
+  color: var(--muted);
+  font-size: 0.78rem;
+  text-align: right;
+  margin-top: 0.3rem;
+}
+
+/* ---------- Favoritos ---------- */
+.fav-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  font-size: 1.2rem;
+  line-height: 1;
+  padding: 0.25rem;
+  border-radius: 50%;
+  transition: transform 0.15s ease, background 0.2s ease;
+  z-index: 2;
+}
+.fav-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.15);
+}
+.fav-btn.active {
+  filter: drop-shadow(0 0 4px rgba(212, 169, 90, 0.6));
+}
+.kcard { position: relative; }
+.fav-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+  flex-wrap: wrap;
+}
+.fav-filter {
+  display: inline-flex;
+  gap: 0.3rem;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.2rem;
+}
+.fav-filter button {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  padding: 0.35rem 0.9rem;
+  border-radius: 999px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+.fav-filter button.active {
+  background: var(--accent);
+  color: #1a1a1a;
+  font-weight: 600;
+}

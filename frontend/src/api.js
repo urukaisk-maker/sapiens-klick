@@ -54,3 +54,30 @@ export const getAchievements = (name) =>
   fetch(`${API_BASE}/achievements/${encodeURIComponent(name)}`).then(jsonOrThrow);
 export const getLeague = (name) =>
   fetch(`${API_BASE}/league/${encodeURIComponent(name)}`).then(jsonOrThrow);
+
+
+
+// ---------- Bio ----------
+export const getBio = (name) =>
+  fetch(`${API_BASE}/profile/${encodeURIComponent(name)}/bio`).then(jsonOrThrow);
+
+export const saveBio = (name, bio) =>
+  fetch(`${API_BASE}/profile/${encodeURIComponent(name)}/bio`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ bio }),
+  }).then(jsonOrThrow);
+
+// ---------- Favoritos ----------
+export const getFavorites = (name) =>
+  fetch(`${API_BASE}/favorites/${encodeURIComponent(name)}`).then(jsonOrThrow);
+
+export const addFavorite = (name, cardKey) =>
+  fetch(`${API_BASE}/favorites/${encodeURIComponent(name)}/${encodeURIComponent(cardKey)}`, {
+    method: 'POST',
+  }).then(jsonOrThrow);
+
+export const removeFavorite = (name, cardKey) =>
+  fetch(`${API_BASE}/favorites/${encodeURIComponent(name)}/${encodeURIComponent(cardKey)}`, {
+    method: 'DELETE',
+  }).then(jsonOrThrow);

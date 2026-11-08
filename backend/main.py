@@ -7,7 +7,7 @@ from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
 from database import engine, get_db, Base
-from models import User, Decision, CardUnlock
+from models import User, Decision, CardUnlock, UserProfile, Favorite
 from scenarios import SCENARIOS
 from cards import CARDS
 from narratives import build_insight
@@ -56,6 +56,9 @@ class HistoryRequest(BaseModel):
 class CardsBatchRequest(BaseModel):
     user_ids: List[int]
 
+
+class BioUpdate(BaseModel):
+    bio: str
 
 @app.get("/")
 def read_root():
@@ -296,3 +299,53 @@ def get_history(payload: HistoryRequest, db: Session = Depends(get_db)):
             "decisions": decisions, "cards_unlocked": cards,
         })
     return results
+
+
+
+# ---------- Bio ----------
+@app.get("/api/profile/{name}/bio")
+def get_bio(name: str, db: Session = Depends(get_db)):
+    prof = db.query(UserProfile).filter(UserProfile.name == name).first()
+    return {"name": name, "bio": prof.bio if prof else None}
+
+
+@app.put("/api/profile/{name}/bio")
+def put_bio(name: str, payload: BioUpdate, db: Session = Depends(get_db)):
+    if not db.query(User).filter(User.name == name).first():
+        raise HTTPException(status_code=404, detail="Nombre no encontrado")
+    clean = (payload.bio or "").strip()[:280]
+    prof = db.query(UserProfile).filter(UserProfile.name == name).first()
+    if not prof:
+        db.add(UserProfile(name=name, bio=clean or None))
+    else:
+        prof.bio = clean or None
+    db.commit()
+    return {"name": name, "bio": clean or None}
+
+
+# ---------- Favoritos ----------
+@app.get("/api/favorites/{name}")
+def list_favorites(name: str, db: Session = Depends(get_db)):
+    rows = (db.query(Favorite)
+            .filter(Favorite.name == name)
+            .order_by(Favorite.created_at).all())
+    return {"name": name, "favorites": [r.card_key for r in rows]}
+
+
+@app.post("/api/favorites/{name}/{card_key}")
+def add_favorite(name: str, card_key: str, db: Session = Depends(get_db)):
+    exists = (db.query(Favorite)
+              .filter(Favorite.name == name, Favorite.card_key == card_key).first())
+    if not exists:
+        db.add(Favorite(name=name, card_key=card_key))
+        db.commit()
+    return {"ok": True, "favorited": True}
+
+
+@app.delete("/api/favorites/{name}/{card_key}")
+def remove_favorite(name: str, card_key: str, db: Session = Depends(get_db)):
+    (db.query(Favorite)
+     .filter(Favorite.name == name, Favorite.card_key == card_key)
+     .delete())
+    db.commit()
+    return {"ok": True, "favorited": False}
