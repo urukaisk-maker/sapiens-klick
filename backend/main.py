@@ -18,8 +18,9 @@ from stats import stats_router
 
 
 app = FastAPI(title="Sapiens Klick API")
-
 app.include_router(stats_router)
+
+
 @app.on_event("startup")
 def on_startup():
     Base.metadata.create_all(bind=engine)
@@ -27,6 +28,7 @@ def on_startup():
         conn.execute(text("ALTER TABLE users ADD COLUMN IF NOT EXISTS name VARCHAR(64)"))
 
 
+# ---------- Schemas ----------
 class SessionResponse(BaseModel):
     user_id: int
     role: str
@@ -60,6 +62,8 @@ class CardsBatchRequest(BaseModel):
 class BioUpdate(BaseModel):
     bio: str
 
+
+# ---------- Base ----------
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "Bienvenido a Sapiens Klick"}
@@ -116,39 +120,21 @@ def leaderboard(db: Session = Depends(get_db)):
     return [{"name": r[0], "sessions": r[1], "decisions": r[2]} for r in rows]
 
 
-@app.post("/api/decision")
-def post_decision(payload: DecisionRequest, db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == payload.user_id).first()
-    if not user:
-        raise HTTPException(status_code=404, detail="Usuario no encontrado")
-    decision = Decision(
-        user_id=payload.user_id, step=payload.step,
-        choice=payload.choice, category=payload.category,
-    )
-    db.add(decision)
+# ---------- Sesiones ----------
+@app.post("/api/session/{role}", response_model=SessionResponse)
+def create_session(role: str, name: Optional[str] = None,
+                   db: Session = Depends(get_db)):
+    if role not in SCENARIOS:
+        raise HTTPException(status_code=404, detail="Rol no encontrado")
+    clean = name.strip()[:64] if name else None
+    if clean == "":
+        clean = None
+    user = User(role=role, name=clean)
+    db.add(user)
     db.commit()
-    db.refresh(decision)
+    db.refresh(user)
+    return {"user_id": user.id, "role": role}
 
-    # Calcular el siguiente paso (con variante contextual si aplica)
-    scenario = SCENARIOS.get(user.role)
-    if not scenario:
-        return {"ok": True, "decision_id": decision.id, "next_step": None}
-
-    steps = scenario["steps"]
-    next_step_num = payload.step + 1
-    next_step = next((s for s in steps if s["step"] == next_step_num), None)
-    if not next_step:
-        return {"ok": True, "decision_id": decision.id, "next_step": None}
-
-    # Aplicar variante si el paso siguiente tiene una para la categoría elegida
-    role_variants = VARIANTS.get(user.role, {})
-    step_variants = role_variants.get(next_step_num, {})
-    resolved = dict(next_step)
-    if payload.category in step_variants:
-        resolved["question"] = step_variants[payload.category]
-    resolved.pop("variants", None)
-
-    return {"ok": True, "decision_id": decision.id, "next_step": resolved}
 
 @app.get("/api/scenario/{role}")
 def get_scenario(role: str):
@@ -168,7 +154,26 @@ def post_decision(payload: DecisionRequest, db: Session = Depends(get_db)):
     )
     db.add(decision)
     db.commit()
-    return {"ok": True, "decision_id": decision.id}
+    db.refresh(decision)
+
+    scenario = SCENARIOS.get(user.role)
+    if not scenario:
+        return {"ok": True, "decision_id": decision.id, "next_step": None}
+
+    steps = scenario["steps"]
+    next_step_num = payload.step + 1
+    next_step = next((s for s in steps if s["step"] == next_step_num), None)
+    if not next_step:
+        return {"ok": True, "decision_id": decision.id, "next_step": None}
+
+    role_variants = VARIANTS.get(user.role, {})
+    step_variants = role_variants.get(next_step_num, {})
+    resolved = dict(next_step)
+    if payload.category in step_variants:
+        resolved["question"] = step_variants[payload.category]
+    resolved.pop("variants", None)
+
+    return {"ok": True, "decision_id": decision.id, "next_step": resolved}
 
 
 def _unlock_card(user_id: int, category: str, db: Session) -> Optional[str]:
@@ -182,6 +187,7 @@ def _unlock_card(user_id: int, category: str, db: Session) -> Optional[str]:
     return category
 
 
+# ---------- Perfil ----------
 @app.get("/api/profile/{user_id}", response_model=ProfileResponse)
 def get_profile(user_id: int, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.id == user_id).first()
@@ -198,19 +204,7 @@ def get_profile(user_id: int, db: Session = Depends(get_db)):
         "dominant": dominant, "card_unlocked": unlocked, "insight": insight,
     }
 
-@app.get("/api/achievements/{name}")
-def get_achievements(name: str, db: Session = Depends(get_db)):
-    return compute_achievements(name, db)
 
-@app.get("/api/league/{name}")
-def get_league(name: str, db: Session = Depends(get_db)):
-    users = db.query(User).filter(User.name == name).all()
-    if not users:
-        raise HTTPException(status_code=404, detail="Nombre no encontrado")
-    user_ids = [u.id for u in users]
-    decisions_count = (db.query(func.count(Decision.id))
-                       .filter(Decision.user_id.in_(user_ids)).scalar() or 0)
-    return compute_league(decisions_count)
 @app.get("/api/user/{name}")
 def user_by_name(name: str, db: Session = Depends(get_db)):
     users = db.query(User).filter(User.name == name).all()
@@ -260,6 +254,7 @@ def compare(user_id: int, db: Session = Depends(get_db)):
             "your_pct": your_pct, "aggregate_pct": agg_pct}
 
 
+# ---------- Cartas ----------
 @app.get("/api/cards")
 def list_cards():
     return [{"key": k, "emoji": v["emoji"], "title": v["title"], "body": v["body"]}
@@ -300,6 +295,22 @@ def get_history(payload: HistoryRequest, db: Session = Depends(get_db)):
         })
     return results
 
+
+# ---------- Logros y liga ----------
+@app.get("/api/achievements/{name}")
+def get_achievements(name: str, db: Session = Depends(get_db)):
+    return compute_achievements(name, db)
+
+
+@app.get("/api/league/{name}")
+def get_league(name: str, db: Session = Depends(get_db)):
+    users = db.query(User).filter(User.name == name).all()
+    if not users:
+        raise HTTPException(status_code=404, detail="Nombre no encontrado")
+    user_ids = [u.id for u in users]
+    decisions_count = (db.query(func.count(Decision.id))
+                       .filter(Decision.user_id.in_(user_ids)).scalar() or 0)
+    return compute_league(decisions_count)
 
 
 # ---------- Bio ----------
