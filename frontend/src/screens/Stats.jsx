@@ -18,9 +18,9 @@ export default function StatsScreen() {
     <div className="fade-in">
       <div className="card">
         <div className="badge">Estadísticas</div>
-        <h1 style={{ marginBottom: '.4rem' }}>Lo que decidimos</h1>
+        <h1 style={{ marginBottom: '.4rem' }}>Crónicas de la horda</h1>
         <p className="subtitle">
-          Distribución agregada de todas las decisiones registradas en Sapiens Klick.
+          Distribución agregada de todas las decisiones registradas en Urukais Klick.
         </p>
       </div>
 
