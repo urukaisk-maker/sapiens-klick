@@ -849,3 +849,67 @@ code {
 
 /* ---------- Transición entre pantallas ---------- */
 .screen { animation: fadeUp 0.35s ease both; }
+
+/* ---------- Tema claro ---------- */
+[data-theme="light"] {
+  --bg: #f4f1ea;
+  --surface: #ffffff;
+  --surface-2: #f0ece2;
+  --border: #d8d2c2;
+  --text: #1a1a1f;
+  --muted: #6b6b78;
+  --accent: #b8862c;
+  --accent-hover: #9e7223;
+  --shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+[data-theme="light"] body {
+  background: radial-gradient(1200px 600px at 50% -10%, #ebe5d8 0%, var(--bg) 60%);
+}
+[data-theme="light"] .nav {
+  background: rgba(244, 241, 234, 0.9);
+}
+[data-theme="light"] .hero-title {
+  background: linear-gradient(135deg, #1a1a1f 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+[data-theme="light"] .insight-box {
+  background: rgba(184, 134, 44, 0.08);
+  color: #3a3325;
+}
+[data-theme="light"] .card-unlock {
+  background: linear-gradient(135deg, #faf4e6 0%, #f5ebd3 100%);
+}
+[data-theme="light"] .quote-box {
+  background: rgba(184, 134, 44, 0.06);
+  color: #3a3325;
+}
+[data-theme="light"] .skeleton-line {
+  background: linear-gradient(90deg, #ebe6da 0%, #f0ece2 40%, #ebe6da 80%);
+  background-size: 800px 100%;
+}
+[data-theme="light"] .bar-agg {
+  background: rgba(0, 0, 0, 0.1);
+}
+[data-theme="light"] .achievement-bar {
+  background: rgba(0, 0, 0, 0.08);
+}
+
+.theme-toggle {
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+.theme-toggle:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
