@@ -94,3 +94,15 @@ export const checkLegendary = (name) =>
   fetch(`${API_BASE}/cards/check-legendary/${encodeURIComponent(name)}`, {
     method: 'POST',
   }).then(jsonOrThrow);
+
+
+
+// ---------- Desafío diario ----------
+export const getDailyChallenge = () =>
+  fetch(`${API_BASE}/daily-challenge`).then(jsonOrThrow);
+
+export const getDailyStatus = (name) =>
+  fetch(`${API_BASE}/daily-status/${encodeURIComponent(name)}`).then(jsonOrThrow);
+
+export const getDailyLeaderboard = () =>
+  fetch(`${API_BASE}/daily-leaderboard`).then(jsonOrThrow);

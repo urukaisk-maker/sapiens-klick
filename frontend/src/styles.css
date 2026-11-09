@@ -1119,3 +1119,104 @@ code {
   display: inline-block;
   margin-bottom: 0.8rem;
 }
+
+/* ---------- Desafío diario ---------- */
+.daily-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.3rem;
+  margin: 1.2rem 0;
+  background: linear-gradient(135deg, #2a1a08 0%, #1a1204 100%);
+  border: 1px solid rgba(212, 169, 90, 0.4);
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(212, 169, 90, 0.15);
+}
+.daily-banner-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.daily-banner-emoji {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 6px rgba(212, 169, 90, 0.5));
+}
+.daily-banner-title {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--accent);
+}
+.daily-banner-title strong {
+  color: var(--text);
+}
+.daily-banner-sub {
+  color: var(--muted);
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+}
+
+.daily-hero {
+  text-align: center;
+}
+.daily-emoji {
+  font-size: 5rem;
+  line-height: 1;
+  margin: 0.4rem 0 0.8rem;
+  filter: drop-shadow(0 0 20px rgba(212, 169, 90, 0.5));
+}
+.daily-intro {
+  font-style: italic;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 600px;
+  margin: 0 auto 1.2rem;
+  border-left: 2px solid var(--accent);
+  padding-left: 1rem;
+  text-align: left;
+}
+.daily-meta {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin: 1.5rem 0;
+  padding: 1rem 0;
+  border-top: 1px solid var(--border);
+  border-bottom: 1px solid var(--border);
+}
+.daily-meta-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.daily-meta-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+.daily-meta-label {
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.3rem;
+}
+.daily-completed {
+  display: inline-block;
+  padding: 0.8rem 1.2rem;
+  background: rgba(107, 207, 127, 0.15);
+  color: #6bcf7f;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-top: 0.5rem;
+}
+.daily-progress {
+  color: var(--muted);
+  font-size: 0.9rem;
+  align-self: center;
+}

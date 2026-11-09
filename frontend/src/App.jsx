@@ -4,7 +4,7 @@ import {
   getScenario, postDecision, getProfile, getComparison, getUserByName,
   getAllCards, getCardsBatch, getAchievements, getLeague,
   getBio, saveBio, getFavorites, addFavorite, removeFavorite, exportMyData,
-  checkLegendary,
+  checkLegendary, getDailyChallenge, getDailyStatus, getDailyLeaderboard,
 } from './api';
 import StatsScreen from './screens/Stats';
 import ResearcherScreen from './screens/Researcher';
@@ -41,6 +41,7 @@ const APP_LINKS = {
 
 const NAV_ITEMS = [
   { key: 'home', label: 'Inicio' },
+  { key: 'daily', label: '🔥 Desafío' },
   { key: 'collection', label: 'Colección' },
   { key: 'leaderboard', label: 'Leaderboard' },
   { key: 'achievements', label: 'Logros' },
@@ -206,6 +207,35 @@ function OnboardingScreen({ onContinue }) {
   );
 }
 
+function DailyBanner({ onNavigate }) {
+  const [challenge, setChallenge] = useState(null);
+
+  useEffect(() => {
+    getDailyChallenge().then(setChallenge).catch(() => {});
+  }, []);
+
+  if (!challenge) return null;
+
+  return (
+    <div className="daily-banner">
+      <div className="daily-banner-content">
+        <span className="daily-banner-emoji">{challenge.emoji}</span>
+        <div>
+          <div className="daily-banner-title">
+            🔥 Desafío del día: <strong>{challenge.role}</strong>
+          </div>
+          <div className="daily-banner-sub">
+            {challenge.participants} orcos lo intentaron · {challenge.completed_count} lo completaron
+          </div>
+        </div>
+      </div>
+      <button className="btn small" onClick={() => onNavigate('daily')}>
+        Ir al desafío
+      </button>
+    </div>
+  );
+}
+
 function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, onResume, onDiscard }) {
   return (
     <div className="fade-in">
@@ -235,6 +265,8 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
           </div>
         )}
       </section>
+
+      <DailyBanner onNavigate={onNavigate} />
 
       {resume && (
         <div className="banner">
@@ -288,6 +320,116 @@ function HomeScreen({ roles, globalStats, history, resume, onStart, onNavigate, 
           <button className="btn ghost small" onClick={() => onNavigate('profile')}>Mi perfil</button>
         </div>
       )}
+    </div>
+  );
+}
+
+function DailyScreen({ userName, onStartDaily }) {
+  const [challenge, setChallenge] = useState(null);
+  const [status, setStatus] = useState(null);
+  const [leaderboard, setLeaderboard] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    Promise.all([
+      getDailyChallenge().catch(() => null),
+      userName ? getDailyStatus(userName).catch(() => null) : Promise.resolve(null),
+      getDailyLeaderboard().catch(() => null),
+    ]).then(([c, s, l]) => {
+      if (!active) return;
+      setChallenge(c);
+      setStatus(s);
+      setLeaderboard(l);
+      setLoading(false);
+    });
+    return () => { active = false; };
+  }, [userName]);
+
+  if (loading) {
+    return (
+      <div className="fade-in">
+        <SkeletonCard />
+      </div>
+    );
+  }
+
+  if (!challenge) {
+    return (
+      <div className="card fade-in">
+        <div className="badge">Desafío</div>
+        <h2>No disponible</h2>
+        <p className="subtitle">No se pudo cargar el desafío del día. Inténtalo de nuevo más tarde.</p>
+      </div>
+    );
+  }
+
+  const completed = status?.completed;
+
+  return (
+    <div className="fade-in">
+      <div className="card daily-hero">
+        <div className="badge">Desafío del día · {challenge.date}</div>
+        <div className="daily-emoji">{challenge.emoji}</div>
+        <h1 style={{ marginBottom: '.4rem' }}>{challenge.role}</h1>
+        <p className="subtitle" style={{ marginBottom: '.8rem' }}>{challenge.tagline}</p>
+        <p className="daily-intro">{challenge.intro}</p>
+
+        <div className="daily-meta">
+          <div className="daily-meta-item">
+            <span className="daily-meta-num">{challenge.participants}</span>
+            <span className="daily-meta-label">orcos lo intentaron</span>
+          </div>
+          <div className="daily-meta-item">
+            <span className="daily-meta-num">{challenge.completed_count}</span>
+            <span className="daily-meta-label">lo completaron</span>
+          </div>
+          <div className="daily-meta-item">
+            <span className="daily-meta-num">{challenge.threshold}</span>
+            <span className="daily-meta-label">decisiones</span>
+          </div>
+        </div>
+
+        {userName && completed ? (
+          <div className="daily-completed">
+            ✅ Ya completaste el desafío de hoy ({status.decisions_today}/{challenge.threshold})
+          </div>
+        ) : (
+          <div className="actions" style={{ marginTop: '1rem' }}>
+            <button className="btn" onClick={() => onStartDaily(challenge.role_key)}>
+              🔥 Aceptar el desafío
+            </button>
+            {userName && status && (
+              <span className="daily-progress">
+                Progreso: {status.decisions_today}/{challenge.threshold}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <div className="card">
+        <h3>🏆 Ranking del desafío</h3>
+        <p className="subtitle">Top 10 orcos que han jugado hoy este rol.</p>
+        {(!leaderboard || leaderboard.entries.length === 0) && (
+          <p style={{ color: 'var(--muted)' }}>Nadie ha participado todavía. ¡Sé el primero!</p>
+        )}
+        {leaderboard && leaderboard.entries.map((e, i) => {
+          const isMe = userName && e.name === userName;
+          const posClass = i === 0 ? 'lb-pos-1' : i === 1 ? 'lb-pos-2' : i === 2 ? 'lb-pos-3' : '';
+          return (
+            <div key={e.name} className="leaderboard-row" style={isMe ? { background: 'rgba(212,169,90,.08)' } : {}}>
+              <span className={`leaderboard-pos ${posClass}`}>#{i + 1}</span>
+              <Avatar name={e.name} size={28} />
+              <span className="leaderboard-name">{e.name}{isMe ? ' (tú)' : ''}</span>
+              <span className="leaderboard-meta">
+                {e.decisions} decisiones
+                {e.decisions >= challenge.threshold && ' ✅'}
+              </span>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -963,6 +1105,8 @@ export default function App() {
       setProfile(null);
       setComparison(null);
       setUnlockedCard(null);
+    } else if (key === 'daily') {
+      setPhase('daily');
     } else if (key === 'collection') {
       openCollection();
     } else if (key === 'leaderboard') {
@@ -1036,6 +1180,15 @@ export default function App() {
           <HomeScreen roles={roles} globalStats={globalStats} history={history}
             resume={resume} onStart={startRole} onNavigate={navigateTo}
             onResume={resumeGame} onDiscard={discardResume} />
+        )}
+        {phase === 'daily' && (
+          <DailyScreen
+            userName={userName}
+            onStartDaily={async (rKey) => {
+              const r = roles.find(x => x.key === rKey);
+              if (r) await startRole(r);
+            }}
+          />
         )}
         {phase === 'playing' && scenario && currentStep && (
           <ScenarioScreen scenario={scenario} step={currentStep}

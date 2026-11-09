@@ -1,5 +1,5 @@
 from typing import Optional, List
-from datetime import datetime
+from datetime import datetime, date
 from collections import Counter
 
 from fastapi import FastAPI, HTTPException, Depends
@@ -108,9 +108,28 @@ class BioUpdate(BaseModel):
 
 
 # ---------- Base ----------
+# ---------- Desafío diario ----------
+def _get_daily_role_key() -> str:
+    """Determina el rol del día de forma determinista (igual para todos)."""
+    today = date.today().isoformat()
+    keys = list(SCENARIOS.keys())
+    h = sum(ord(c) * (i + 1) for i, c in enumerate(today))
+    return keys[h % len(keys)]
+
+
+def _get_daily_decision_threshold() -> int:
+    """Número de decisiones necesarias para completar el desafío (5 normalmente)."""
+    key = _get_daily_role_key()
+    return len(SCENARIOS[key]["steps"])
+
+
+# ---------- Base ----------
 @app.get("/")
 def read_root():
     return {"status": "ok", "message": "Bienvenido a Urukais Klick"}
+
+
+@app.get("/api/health")
 
 
 @app.get("/api/health")
@@ -479,3 +498,96 @@ def export_my_data(name: str, db: Session = Depends(get_db)):
         content=data,
         headers={"Content-Disposition": f"attachment; filename=urukais-{name}.json"},
     )
+
+
+
+# ---------- Desafío diario: endpoints ----------
+@app.get("/api/daily-challenge")
+def get_daily_challenge(db: Session = Depends(get_db)):
+    key = _get_daily_role_key()
+    role = SCENARIOS[key]
+    today_iso = date.today().isoformat()
+
+    # Contar participantes únicos que hoy han jugado ese rol
+    rows = (db.query(func.count(func.distinct(Decision.user_id)))
+            .join(User, User.id == Decision.user_id)
+            .filter(User.role == key)
+            .filter(func.date(Decision.created_at) == today_iso)
+            .scalar() or 0)
+
+    # Cuántas personas lo han completado (>= 5 decisiones)
+    from sqlalchemy import select
+    subq = (select(Decision.user_id, func.count(Decision.id).label("c"))
+            .join(User, User.id == Decision.user_id)
+            .where(User.role == key)
+            .where(func.date(Decision.created_at) == today_iso)
+            .group_by(Decision.user_id)
+            .subquery())
+    completed_count = db.execute(
+        select(func.count()).select_from(subq).where(subq.c.c >= _get_daily_decision_threshold())
+    ).scalar() or 0
+
+    return {
+        "date": today_iso,
+        "role_key": key,
+        "role": role["role"],
+        "emoji": role.get("emoji", "🎭"),
+        "tagline": role.get("tagline", ""),
+        "intro": role.get("intro", ""),
+        "threshold": _get_daily_decision_threshold(),
+        "participants": rows,
+        "completed_count": completed_count,
+    }
+
+
+@app.get("/api/daily-status/{name}")
+def get_daily_status(name: str, db: Session = Depends(get_db)):
+    key = _get_daily_role_key()
+    today_iso = date.today().isoformat()
+    threshold = _get_daily_decision_threshold()
+
+    count = (db.query(func.count(Decision.id))
+             .join(User, User.id == Decision.user_id)
+             .filter(User.name == name)
+             .filter(User.role == key)
+             .filter(func.date(Decision.created_at) == today_iso)
+             .scalar() or 0)
+
+    return {
+        "date": today_iso,
+        "role_key": key,
+        "completed": count >= threshold,
+        "decisions_today": count,
+        "threshold": threshold,
+    }
+
+
+@app.get("/api/daily-leaderboard")
+def get_daily_leaderboard(db: Session = Depends(get_db)):
+    key = _get_daily_role_key()
+    today_iso = date.today().isoformat()
+
+    rows = (db.query(
+                User.name,
+                func.count(Decision.id).label("decisions"),
+                func.max(Decision.created_at).label("finished_at"))
+            .join(Decision, Decision.user_id == User.id)
+            .filter(User.role == key)
+            .filter(func.date(Decision.created_at) == today_iso)
+            .filter(User.name.isnot(None))
+            .group_by(User.name)
+            .order_by(func.count(Decision.id).desc(), func.max(Decision.created_at).asc())
+            .limit(10).all())
+
+    return {
+        "date": today_iso,
+        "role_key": key,
+        "entries": [
+            {
+                "name": r[0],
+                "decisions": r[1],
+                "finished_at": r[2].isoformat() if r[2] else None,
+            }
+            for r in rows
+        ],
+    }
