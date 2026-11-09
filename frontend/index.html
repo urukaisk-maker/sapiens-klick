@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Urukais Klick — La horda que te define</title>
-    <meta name="description" content="Simulador de decisiones en las Tierras Oscuras. Encarna a un orco del clan Urukais Klick, decide 5 veces y descubre qué tipo de guerrero eres. 8 arquetipos, 35 cartas, 22 logros." />
-    <meta name="theme-color" content="#0e0e12" />
+    <meta name="description" content="Simulador de decisiones en las Tierras Oscuras. Encarna a un orco del clan Urukais Klick, decide 5 veces y descubre qué tipo de guerrero eres. 10 arquetipos, 40 cartas, 26 logros." />
+    <meta name="theme-color" content="#0e0604" />
 
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Urukais Klick — La horda que te define" />
-    <meta property="og:description" content="Encarna a un orco del clan Urukais Klick. 8 arquetipos, 35 cartas, 22 logros. ¿Qué tipo de guerrero eres?" />
+    <meta property="og:description" content="Encarna a un orco del clan Urukais Klick. 10 arquetipos, 40 cartas, 26 logros. ¿Qué tipo de guerrero eres?" />
     <meta property="og:image" content="/og-image.svg" />
 
     <meta name="twitter:card" content="summary_large_image" />
@@ -18,11 +18,69 @@
     <meta name="twitter:image" content="/og-image.svg" />
 
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.json" />
+    <link rel="apple-touch-icon" href="/favicon.svg" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Urukais" />
+
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+
+    <style>
+      /* Splash inline (antes de que cargue el CSS externo) */
+      #splash {
+        position: fixed;
+        inset: 0;
+        background: radial-gradient(1200px 600px at 50% 50%, #1a0f0a 0%, #0e0604 100%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1.2rem;
+        z-index: 10000;
+        transition: opacity 0.5s ease;
+      }
+      #splash.splash-hidden {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .splash-mark {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        background: radial-gradient(circle at 30% 30%, #f1d79c, #d4a95a);
+        box-shadow: 0 0 60px rgba(212, 169, 90, 0.6);
+        animation: splashPulse 1.8s ease-in-out infinite;
+      }
+      @keyframes splashPulse {
+        0%, 100% { transform: scale(1); box-shadow: 0 0 60px rgba(212, 169, 90, 0.6); }
+        50% { transform: scale(1.08); box-shadow: 0 0 90px rgba(212, 169, 90, 0.8); }
+      }
+      .splash-title {
+        font-family: Georgia, serif;
+        font-size: 2rem;
+        font-weight: 700;
+        letter-spacing: 4px;
+        color: #d4a95a;
+        text-shadow: 0 0 20px rgba(212, 169, 90, 0.4);
+      }
+      .splash-sub {
+        color: #6b5544;
+        font-family: system-ui, sans-serif;
+        font-size: 0.85rem;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+      }
+    </style>
   </head>
   <body>
+    <div id="splash">
+      <div class="splash-mark"></div>
+      <div class="splash-title">URUKAIS KLICK</div>
+      <div class="splash-sub">Tierras Oscuras</div>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

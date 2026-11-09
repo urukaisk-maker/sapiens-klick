@@ -72,7 +72,7 @@ const clearInProgress = () => {
 
 /* ============ Layout ============ */
 
-function Navigation({ current, onNavigate, userName, theme, onToggleTheme, soundOn, onToggleSound }) {
+function Navigation({ current, onNavigate, userName, theme, onToggleTheme, soundOn, onToggleSound, installPrompt, onInstall }) {
   return (
     <nav className="nav">
       <div className="nav-brand" onClick={() => onNavigate('home')}>
@@ -91,6 +91,15 @@ function Navigation({ current, onNavigate, userName, theme, onToggleTheme, sound
         ))}
       </div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+        {installPrompt && (
+          <button
+            className="install-btn"
+            onClick={onInstall}
+            title="Instalar Urukais Klick como app"
+          >
+            📱 Instalar
+          </button>
+        )}
         <button
           className="sound-toggle"
           onClick={onToggleSound}
@@ -906,6 +915,7 @@ export default function App() {
   const [soundOn, setSoundOn] = useState(() => isSoundEnabled());
   const [showShare, setShowShare] = useState(false);
   const [shareLeague, setShareLeague] = useState(null);
+  const [installPrompt, setInstallPrompt] = useState(null);
 
   useEffect(() => {
     const n = localStorage.getItem(LS_NAME) || '';
@@ -927,6 +937,31 @@ export default function App() {
     document.documentElement.setAttribute('data-theme', theme);
     localStorage.setItem(LS_THEME, theme);
   }, [theme]);
+
+  useEffect(() => {
+    function handleBeforeInstall(e) {
+      e.preventDefault();
+      setInstallPrompt(e);
+    }
+    function handleInstalled() {
+      setInstallPrompt(null);
+    }
+    window.addEventListener('beforeinstallprompt', handleBeforeInstall);
+    window.addEventListener('appinstalled', handleInstalled);
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handleBeforeInstall);
+      window.removeEventListener('appinstalled', handleInstalled);
+    };
+  }, []);
+
+  async function handleInstall() {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    const choice = await installPrompt.userChoice;
+    if (choice.outcome === 'accepted') {
+      setInstallPrompt(null);
+    }
+  }
 
   function toggleSound() {
     const next = !soundOn;
@@ -1137,6 +1172,15 @@ export default function App() {
             <div className="brand-name">Urukais Klick</div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            {installPrompt && (
+              <button
+                className="install-btn"
+                onClick={handleInstall}
+                title="Instalar Urukais Klick como app"
+              >
+                📱 Instalar
+              </button>
+            )}
             <button
               className="sound-toggle"
               onClick={toggleSound}
@@ -1173,6 +1217,8 @@ export default function App() {
         onToggleTheme={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         soundOn={soundOn}
         onToggleSound={toggleSound}
+        installPrompt={installPrompt}
+        onInstall={handleInstall}
       />
       <main className="app-main">
         <div className="screen" key={phase}>

@@ -1,0 +1,27 @@
+{
+  "name": "Urukais Klick — La horda que te define",
+  "short_name": "Urukais",
+  "description": "Simulador de decisiones en las Tierras Oscuras de Mordor. Encarna a un orco del clan Urukais Klick.",
+  "start_url": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0e0604",
+  "theme_color": "#0e0604",
+  "scope": "/",
+  "lang": "es",
+  "categories": ["games", "entertainment"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
