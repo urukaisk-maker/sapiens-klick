@@ -24,3 +24,9 @@ Thumbs.db
 
 # Volúmenes de Docker
 postgres_data/
+
+# Backups
+*.bak
+*.orig
+*.swp
+*~
