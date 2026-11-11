@@ -134,41 +134,63 @@ function Footer({ onNavigate }) {
   return (
     <footer className="footer">
       <div className="footer-grid">
-        <div className="footer-col">
+
+        <div className="footer-col footer-brand-col">
           <div className="footer-brand">
             <div className="brand-mark small" />
             <span>Urukais Klick</span>
           </div>
           <p className="footer-desc">
-            Simulador de decisiones en las Tierras Oscuras. Encarna a un orco del clan
-            Urukais Klick y descubre qué tipo de guerrero habita en ti.
+            Simulador de decisiones en las Tierras Oscuras. Encarna a un orco
+            del clan y descubre qué tipo de guerrero habita en ti.
           </p>
+          <div className="footer-stats">
+            <span><strong>10</strong> orcos</span>
+            <span><strong>40</strong> cartas</span>
+            <span><strong>26</strong> logros</span>
+          </div>
         </div>
+
         <div className="footer-col">
-          <h5>Navegar</h5>
+          <h5>Juega</h5>
           <ul>
-            {NAV_ITEMS.map((it) => (
-              <li key={it.key}>
-                <a onClick={() => onNavigate(it.key)}>{it.label}</a>
-              </li>
-            ))}
-            <li><a onClick={() => onNavigate('researcher')} style={{ opacity: 0.6 }}>Investigador</a></li>
-            <li><a onClick={() => onNavigate('notfound')} style={{ opacity: 0.35, fontSize: '0.78rem' }}>404</a></li>
+            <li><a onClick={() => onNavigate('home')}>Inicio</a></li>
+            <li><a onClick={() => onNavigate('daily')}>🔥 Desafío del día</a></li>
+            <li><a onClick={() => onNavigate('collection')}>Colección</a></li>
+            <li><a onClick={() => onNavigate('leaderboard')}>Leaderboard</a></li>
           </ul>
         </div>
+
+        <div className="footer-col">
+          <h5>Tu horda</h5>
+          <ul>
+            <li><a onClick={() => onNavigate('profile')}>Perfil</a></li>
+            <li><a onClick={() => onNavigate('achievements')}>Logros</a></li>
+            <li><a onClick={() => onNavigate('stats')}>Estadísticas</a></li>
+            <li><a onClick={() => onNavigate('researcher')}>Investigador</a></li>
+          </ul>
+        </div>
+
         <div className="footer-col">
           <h5>Proyecto</h5>
           <ul>
+            <li><a onClick={() => onNavigate('about')}>Acerca de</a></li>
             <li><a href={APP_LINKS.netlify} target="_blank" rel="noopener noreferrer">Demo ↗</a></li>
-            <li><a href={APP_LINKS.github} target="_blank" rel="noopener noreferrer">Autor ↗</a></li>
             <li><a href={APP_LINKS.repo} target="_blank" rel="noopener noreferrer">Repositorio ↗</a></li>
+            <li><a href={APP_LINKS.github} target="_blank" rel="noopener noreferrer">Autor ↗</a></li>
           </ul>
         </div>
+
       </div>
+
       <div className="footer-bottom">
         <span>© {year} Urukais Klick</span>
+        <span className="footer-dot">·</span>
         <span>Desarrollado por <strong>{APP_LINKS.developer}</strong></span>
+        <span className="footer-dot">·</span>
         <span>{APP_LINKS.alias}</span>
+        <span className="footer-dot">·</span>
+        <span>Hecho con 🪓 en las Tierras Oscuras</span>
       </div>
     </footer>
   );
