@@ -1269,7 +1269,7 @@ export default function App() {
       </main>
       <Footer onNavigate={navigateTo} />
 
-      {showShare && profile && (
+        {showShare && profile && (
         <ShareCard
           profile={profile}
           unlockedCard={unlockedCard}
